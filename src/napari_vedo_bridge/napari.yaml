@@ -2,20 +2,11 @@ name: napari-vedo-bridge
 display_name: napari vedo bridge
 contributions:
   commands:
-    - id: napari-vedo-bridge.make_qwidget
-      python_name: napari_vedo_bridge._widget:ExampleQWidget
-      title: Make example QWidget
-    - id: napari-vedo-bridge.make_magic_widget
-      python_name: napari_vedo_bridge._widget:example_magic_widget
-      title: Make example magic widget
-    - id: napari-vedo-bridge.make_func_widget
-      python_name: napari_vedo_bridge._widget:example_function_widget
-      title: Make example function widget
+    - id: napari-vedo-bridge.cutter_widget
+      python_name: napari_vedo_bridge._cutter_widget:VedoCutter
+      title: Interactive mesh cutting with Vedo
+
   widgets:
-    - command: napari-vedo-bridge.make_qwidget
-      display_name: Example QWidget
-    - command: napari-vedo-bridge.make_magic_widget
-      display_name: Example Magic Widget
-    - command: napari-vedo-bridge.make_func_widget
-      autogenerate: true
-      display_name: Example Function Widget
+    - command: napari-vedo-bridge.cutter_widget
+      display_name: Mesh cutter
+

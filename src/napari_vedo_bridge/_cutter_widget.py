@@ -1,5 +1,6 @@
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from vedo import Plotter, Mesh, dataurl, Axes
+from vedo import Plotter, Text2D, Mesh, dataurl, Axes
+from vedo.addons import BoxCutter
 import os
 from pathlib import Path
 from qtpy import uic
@@ -16,9 +17,6 @@ class VedoCutter(QWidget):
         self.napari_viewer = napari_viewer
         uic.loadUi(os.path.join(Path(__file__).parent, "./vedo_extension.ui"), self)
 
-    #     Qt.QMainWindow.__init__(self, parent)
-    #     self.frame = Qt.QFrame()
-        # self.layout = Qt.QVBoxLayout()
         self.vtkWidget = QVTKRenderWindowInteractor()
         self.layout().insertWidget(0, self.vtkWidget)
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='blackboard', axes=0)
@@ -35,13 +33,21 @@ class VedoCutter(QWidget):
         self.box_cutter_widget = None
         self.sphere_cutter_widget = None
 
+        self.vedo_message = Text2D(font='Calco', c='white')
+
     def get_from_napari(self):
         """
         Get the currently selected layer from napari and display it in vedo
         """
-
         self.currently_selected_layer = self.napari_viewer.layers.selection.active
-        self.mesh = Mesh(self.currently_selected_layer.data[:2])  # only vertices and faces
+        
+        # self.mesh = Mesh(self.currently_selected_layer.data[:2])  # only vertices and faces
+        
+        self.mesh = Mesh("997.ply").triangulate()
+        # self.mesh = Mesh("beethoven.ply").triangulate()
+
+        self.mesh.c("yellow5").backcolor("purple6").lighting("glossy")
+
         #mesh.pointdata = self.currently_selected_layer.features  # scalars
         # Create renderer and add the vedo objects and callbacks
 
@@ -49,18 +55,16 @@ class VedoCutter(QWidget):
         self.pushButton_sphere_cutter.setChecked(False)
         self.pushButton_plane_cutter.setChecked(False)
 
-        if len(self.plt.actors) > 0:
-            self.plt.clear(deep=True)
-        #self.plt += Axes(self.mesh, c='white')
+        self.plt += Axes(self.mesh, c='white')
         self.plt += self.mesh
-        self.plt.reset_camera()
+        self.plt += self.vedo_message
+        self.plt.reset_camera().render()
 
     def send_to_napari(self):
         """
         Send the currently displayed mesh in vedo to napari
         """
         # retrieve from plotter
-        self.mesh = self.plt.actors[0]
         mesh_tuple = (self.mesh.points(), np.asarray(self.mesh.faces()))
 
         if len(mesh_tuple[0]) == 0:
@@ -68,6 +72,24 @@ class VedoCutter(QWidget):
             return
 
         self.napari_viewer.add_surface(mesh_tuple)
+
+    def box_cutter_tool(self):
+        """
+        Add a box cutter tool to the vedo plotter
+        """
+        self.vedo_message.text(
+            "Press r to reset the cutting box\n"
+            'Press spacebar to toggle the cutting box on/off\n'
+            'Press i to invert the selection\n',
+        )
+        if self.pushButton_box_cutter.isChecked():
+            self.box_cutter_widget = BoxCutter(
+                self.mesh,
+                invert=self.checkBox_invert.isChecked(),
+            )
+            self.plt.add(self.box_cutter_widget)
+        else:
+            self.box_cutter_widget.off()
 
     def plane_cutter_tool(self):
         """
@@ -87,26 +109,7 @@ class VedoCutter(QWidget):
         else:
             self.plane_cutter_widget.Off()
 
-    def box_cutter_tool(self):
-        """
-        Add a box cutter tool to the vedo plotter
-        """
-        print(self.plt.actors)
-        if self.pushButton_box_cutter.isChecked():
-            self.plt.add_cutter_tool(mode='box',
-                                     invert=self.checkBox_invert.isChecked())
-            if self.plane_cutter_widget is not None:
-                self.plane_cutter_widget.Off()
-            if self.sphere_cutter_widget is not None:
-                self.sphere_cutter_widget.Off()
-                
-            self.plt.cutter_widget.On()
-            self.box_cutter_widget = self.plt.cutter_widget
-        else:
-            self.box_cutter_widget.Off()
-
     def sphere_cutter_tool(self):
-        print(self.plt.actors)
         if self.pushButton_sphere_cutter.isChecked():
             self.plt.add_cutter_tool(mode='sphere',
                                      invert=self.checkBox_invert.isChecked())

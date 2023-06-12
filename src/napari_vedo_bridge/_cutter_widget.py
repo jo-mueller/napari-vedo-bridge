@@ -41,11 +41,12 @@ class VedoCutter(QWidget):
         """
         self.currently_selected_layer = self.napari_viewer.layers.selection.active
         
-        # self.mesh = Mesh(self.currently_selected_layer.data[:2])  # only vertices and faces
+        self.mesh = Mesh(self.currently_selected_layer.data[:2])  # only vertices and faces
         
-        self.mesh = Mesh("997.ply").triangulate()
-        # self.mesh = Mesh("beethoven.ply").triangulate()
+        # self.mesh = Mesh("997.ply")
+        # self.mesh = Mesh("beethoven.ply")
 
+        self.mesh.triangulate()
         self.mesh.c("yellow5").backcolor("purple6").lighting("glossy")
 
         #mesh.pointdata = self.currently_selected_layer.features  # scalars

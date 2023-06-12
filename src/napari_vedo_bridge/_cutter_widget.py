@@ -1,12 +1,12 @@
-from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from vedo import Plotter, Text2D, Mesh, dataurl, Axes
-from vedo.addons import BoxCutter
 import os
 from pathlib import Path
 from qtpy import uic
 from qtpy.QtWidgets import QWidget
 import numpy as np
-from magicgui import magicgui
+# from magicgui import magicgui
+
+from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vedo import Plotter, Text2D, Mesh, Axes, BoxCutter, dataurl
 
 
 class VedoCutter(QWidget):
@@ -19,6 +19,7 @@ class VedoCutter(QWidget):
 
         self.vtkWidget = QVTKRenderWindowInteractor()
         self.layout().insertWidget(0, self.vtkWidget)
+
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='blackboard', axes=0)
         self.plt.show(interactive=False)
 
@@ -41,11 +42,15 @@ class VedoCutter(QWidget):
         """
         self.currently_selected_layer = self.napari_viewer.layers.selection.active
         
-        self.mesh = Mesh(self.currently_selected_layer.data[:2])  # only vertices and faces
-        
-        # self.mesh = Mesh("997.ply")
-        # self.mesh = Mesh("beethoven.ply")
+        # points = self.currently_selected_layer.data[0].astype(float)
+        # faces = self.currently_selected_layer.data[1].astype(int)
+        # scalars = self.currently_selected_layer.data[2]
+        # self.mesh = Mesh([points, faces])  # only vertices and faces       
+        # if len(scalars) > 0:
+        #     self.mesh.pointdata['scalars'] = scalars
+        #     #self.currently_selected_layer.features  # scalars
 
+        self.mesh = Mesh("997.ply")
         self.mesh.triangulate()
         self.mesh.c("yellow5").backcolor("purple6").lighting("glossy")
 

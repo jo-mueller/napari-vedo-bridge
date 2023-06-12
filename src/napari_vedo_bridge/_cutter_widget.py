@@ -7,6 +7,7 @@ import numpy as np
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import Plotter, Text2D, Mesh, Axes, BoxCutter, dataurl
+from vedo import __version__ as _vedo_version
 
 
 class VedoCutter(QWidget):
@@ -14,14 +15,20 @@ class VedoCutter(QWidget):
     def __init__(self, napari_viewer=None):
         super().__init__()
 
+        self.mesh = None
+
+        self.plane_cutter_widget = None
+        self.box_cutter_widget = None
+        self.sphere_cutter_widget = None
+    
+        self.vedo_message = Text2D(font='Calco', c='white')
+        self.vedo_axes = None
+
         self.napari_viewer = napari_viewer
         uic.loadUi(os.path.join(Path(__file__).parent, "./vedo_extension.ui"), self)
 
         self.vtkWidget = QVTKRenderWindowInteractor()
         self.layout().insertWidget(0, self.vtkWidget)
-
-        self.plt = Plotter(qt_widget=self.vtkWidget, bg='blackboard', axes=0)
-        self.plt.show(interactive=False)
 
         self.pushButton_send_back.clicked.connect(self.send_to_napari)
         self.pushButton_get_from_napari.clicked.connect(self.get_from_napari)
@@ -30,40 +37,52 @@ class VedoCutter(QWidget):
         self.pushButton_sphere_cutter.clicked.connect(self.sphere_cutter_tool)
         self.pushButton_plane_cutter.clicked.connect(self.plane_cutter_tool)
 
-        self.plane_cutter_widget = None
-        self.box_cutter_widget = None
-        self.sphere_cutter_widget = None
+        self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
+        self.plt += self.vedo_message
+        self.plt += Text2D("vedo "+_vedo_version,
+                           pos='top-right', font='Calco', c='k5', s=0.5)
+        self.plt.show()
 
-        self.vedo_message = Text2D(font='Calco', c='white')
 
     def get_from_napari(self):
         """
         Get the currently selected layer from napari and display it in vedo
-        """
+        """        
+        if self.box_cutter_widget:
+            self.plt.remove(self.box_cutter_widget)
+        if self.plane_cutter_widget:
+            self.plt.remove(self.plane_cutter_widget)
+        if self.sphere_cutter_widget:
+            self.plt.remove(self.sphere_cutter_widget)
+        self.plt.remove(self.mesh, self.vedo_axes)
+
         self.currently_selected_layer = self.napari_viewer.layers.selection.active
-        
-        # points = self.currently_selected_layer.data[0].astype(float)
-        # faces = self.currently_selected_layer.data[1].astype(int)
-        # scalars = self.currently_selected_layer.data[2]
-        # self.mesh = Mesh([points, faces])  # only vertices and faces       
-        # if len(scalars) > 0:
-        #     self.mesh.pointdata['scalars'] = scalars
-        #     #self.currently_selected_layer.features  # scalars
+        if self.currently_selected_layer:
+            points = self.currently_selected_layer.data[0].astype(float)
+            faces = self.currently_selected_layer.data[1].astype(int)
+            scalars = self.currently_selected_layer.data[2]
+            self.mesh = Mesh([points, faces])  # only vertices and faces       
+            if len(scalars) > 0:
+                self.mesh.pointdata['scalars'] = scalars
+        else:
+            # TEST mesh
+            self.mesh = Mesh(dataurl+"mouse_brain.stl")
 
-        self.mesh = Mesh("997.ply")
-        self.mesh.triangulate()
-        self.mesh.c("yellow5").backcolor("purple6").lighting("glossy")
+        # self.mesh.triangulate()
+        self.mesh.c("yellow6").backcolor("purple6").lighting("shiny")
 
-        #mesh.pointdata = self.currently_selected_layer.features  # scalars
-        # Create renderer and add the vedo objects and callbacks
+        try:
+            if self.currently_selected_layer.name:
+                self.vedo_message.text(f"Mesh: {self.currently_selected_layer.name}")
+        except AttributeError:
+            self.vedo_message.text("Test Mesh (mouse brain)")
 
         self.pushButton_box_cutter.setChecked(False)
         self.pushButton_sphere_cutter.setChecked(False)
         self.pushButton_plane_cutter.setChecked(False)
 
-        self.plt += Axes(self.mesh, c='white')
-        self.plt += self.mesh
-        self.plt += self.vedo_message
+        self.vedo_axes = Axes(self.mesh, c='white')
+        self.plt.add(self.vedo_axes, self.mesh)
         self.plt.reset_camera().render()
 
     def send_to_napari(self):
@@ -74,7 +93,8 @@ class VedoCutter(QWidget):
         mesh_tuple = (self.mesh.points(), np.asarray(self.mesh.faces()))
 
         if len(mesh_tuple[0]) == 0:
-            print('No mesh to send to napari')
+            self.vedo_message.text("No mesh to send to napari!")
+            self.plt.render()
             return
 
         self.napari_viewer.add_surface(mesh_tuple)
@@ -83,47 +103,40 @@ class VedoCutter(QWidget):
         """
         Add a box cutter tool to the vedo plotter
         """
-        self.vedo_message.text(
-            "Press r to reset the cutting box\n"
-            'Press spacebar to toggle the cutting box on/off\n'
-            'Press i to invert the selection\n',
-        )
+        if not self.mesh:
+            self.vedo_message.text("Please load a mesh first")
+            self.plt.render()
+            return
+
+        # remove old cutter
+        if self.box_cutter_widget is not None:
+            self.plt.remove(self.box_cutter_widget)
+            self.box_cutter_widget = None
+            self.vedo_message.text("cutter removed")
+
+        # add new cutter
         if self.pushButton_box_cutter.isChecked():
             self.box_cutter_widget = BoxCutter(
                 self.mesh,
                 invert=self.checkBox_invert.isChecked(),
             )
             self.plt.add(self.box_cutter_widget)
-        else:
-            self.box_cutter_widget.off()
+            self.vedo_message.text(
+                "Press r to reset the cutter\n"
+                'Press spacebar to toggle the cutter on/off\n'
+                'Press i to invert the selection\n',
+            )
+        
+        self.plt.render()
 
     def plane_cutter_tool(self):
         """
         Add a plane cutter tool to the vedo plotter
         """
-        print(self.plt.actors)
-        if self.pushButton_plane_cutter.isChecked():
-            self.plt.add_cutter_tool(mode='plane',
-                                     invert=self.checkBox_invert.isChecked())
-            if self.box_cutter_widget is not None:
-                self.box_cutter_widget.Off()
-            if self.sphere_cutter_widget is not None:
-                self.sphere_cutter_widget.Off()
-
-            self.plt.cutter_widget.On()
-            self.plane_cutter_widget = self.plt.cutter_widget
-        else:
-            self.plane_cutter_widget.Off()
+        pass
 
     def sphere_cutter_tool(self):
-        if self.pushButton_sphere_cutter.isChecked():
-            self.plt.add_cutter_tool(mode='sphere',
-                                     invert=self.checkBox_invert.isChecked())
-            if self.plane_cutter_widget is not None:
-                self.plane_cutter_widget.Off()
-            if self.box_cutter_widget is not None:
-                self.box_cutter_widget.Off()
-            self.plt.cutter_widget.On()
-            self.sphere_cutter_widget = self.plt.cutter_widget
-        else:
-            self.sphere_cutter_widget.Off()
+        """
+        Add a sphere cutter tool to the vedo plotter
+        """
+        pass

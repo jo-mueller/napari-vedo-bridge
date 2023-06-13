@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from qtpy import uic
 from qtpy.QtWidgets import QWidget
+from qtpy.QtWidgets import QFileDialog
 import numpy as np
 # from magicgui import magicgui
 
@@ -34,6 +35,7 @@ class VedoCutter(QWidget):
         self.pushButton_box_cutter.clicked.connect(self.box_cutter_tool)
         self.pushButton_sphere_cutter.clicked.connect(self.sphere_cutter_tool)
         self.pushButton_plane_cutter.clicked.connect(self.plane_cutter_tool)
+        self.pushButton_load_mesh.clicked.connect(self._load_mesh)
 
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
         self.plt += self.vedo_message
@@ -139,3 +141,23 @@ class VedoCutter(QWidget):
         Add a sphere cutter tool to the vedo plotter
         """
         pass
+
+
+    def _load_mesh(self):
+        """
+        Opens a file dialog to load a mesh file.
+        """
+        filename = QFileDialog.getOpenFileName(
+            caption='Open mesh file',
+            filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp)'
+        )
+
+        if self.mesh:
+            self.plt.clear(deep=True)
+
+        self.mesh = Mesh(filename[0])
+    
+        self.vedo_axes = Axes(self.mesh, c='white')
+
+        self.plt += [self.mesh, self.vedo_axes]
+        self.plt.reset_camera().render()

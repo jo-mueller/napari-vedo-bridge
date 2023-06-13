@@ -7,56 +7,63 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>432</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Vedo viewer</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="pushButton_plane_cutter">
-         <property name="text">
-          <string>Plane cutter</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_box_cutter">
-         <property name="text">
-          <string>Box cutter</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_sphere_cutter">
-         <property name="text">
-          <string>Sphere cutter</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBox_invert">
-       <property name="enabled">
+      <widget class="QPushButton" name="pushButton_plane_cutter">
+       <property name="text">
+        <string>Plane cutter</string>
+       </property>
+       <property name="checkable">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_box_cutter">
        <property name="text">
-        <string>Invert</string>
+        <string>Box cutter</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_sphere_cutter">
+       <property name="text">
+        <string>Sphere cutter</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBox_invert">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Invert</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="pushButton_load_mesh">
+       <property name="text">
+        <string>Load mesh</string>
        </property>
       </widget>
      </item>
@@ -67,14 +74,14 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_send_back">
-       <property name="text">
-        <string>Send back to napari</string>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_send_back">
+     <property name="text">
+      <string>Send back to napari</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

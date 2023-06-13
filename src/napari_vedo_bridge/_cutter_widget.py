@@ -7,8 +7,9 @@ import numpy as np
 # from magicgui import magicgui
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from vedo import Plotter, Text2D, Mesh, Axes, BoxCutter, dataurl
 from vedo import __version__ as _vedo_version
+from vedo import Plotter, Text2D, Mesh, Axes, BoxCutter, dataurl
+from vedo.utils import is_ragged
 
 
 class VedoCutter(QWidget):
@@ -19,6 +20,10 @@ class VedoCutter(QWidget):
         self.mesh = None
 
         self.cutter_widget = None
+
+        self.mesh_color = "yellow6"
+        self.mesh_backcolor = "purple7"
+        self.mesh_lighting = "shiny"
     
         self.vedo_message = Text2D(font='Calco', c='white')
         self.vedo_axes = None
@@ -69,8 +74,9 @@ class VedoCutter(QWidget):
             # TEST mesh
             self.mesh = Mesh(dataurl+"mouse_brain.stl")
 
-        # self.mesh.triangulate()
-        self.mesh.c("yellow6").backcolor("purple6").lighting("shiny")
+        self.mesh.c(self.mesh_color)
+        self.mesh.backcolor(self.mesh_backcolor)
+        self.mesh.lighting(self.mesh_lighting)
 
         try:
             if self.currently_selected_layer.name:
@@ -90,8 +96,21 @@ class VedoCutter(QWidget):
         """
         Send the currently displayed mesh in vedo to napari
         """
-        # retrieve from plotter
-        mesh_tuple = (self.mesh.points(), np.asarray(self.mesh.faces()))
+
+        # self.pushButton_box_cutter.setChecked(False)
+        # self.pushButton_sphere_cutter.setChecked(False)
+        # self.pushButton_plane_cutter.setChecked(False)
+
+        points = self.mesh.points()
+        faces = self.mesh.faces()
+        if len(faces):
+            if is_ragged(faces) or len(faces[0]):
+                self.mesh.triangulate()
+                faces = self.mesh.faces()
+                self.vedo_message.text("Mesh has been made triangular!")
+                self.plt.render()
+        faces = np.asarray(faces, dtype=int)
+        mesh_tuple = (points, faces)
 
         if len(mesh_tuple[0]) == 0:
             self.vedo_message.text("No mesh to send to napari!")
@@ -113,7 +132,6 @@ class VedoCutter(QWidget):
         if self.cutter_widget is not None:
             self.plt.remove(self.cutter_widget)
             self.cutter_widget = None
-            self.vedo_message.text("cutter removed")
 
         # add new cutter
         if self.pushButton_box_cutter.isChecked():
@@ -152,11 +170,20 @@ class VedoCutter(QWidget):
             filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp)'
         )
 
-        if self.mesh:
-            self.plt.clear(deep=True)
+        self.pushButton_box_cutter.setChecked(False)
+        self.pushButton_sphere_cutter.setChecked(False)
+        self.pushButton_plane_cutter.setChecked(False)
+
+        if self.cutter_widget:
+            self.plt.remove(self.cutter_widget)
+        self.plt.remove(self.mesh, self.vedo_axes)
 
         self.mesh = Mesh(filename[0])
-    
+
+        self.mesh.c(self.mesh_color)
+        self.mesh.backcolor(self.mesh_backcolor)
+        self.mesh.lighting(self.mesh_lighting)
+
         self.vedo_axes = Axes(self.mesh, c='white')
 
         self.plt += [self.mesh, self.vedo_axes]

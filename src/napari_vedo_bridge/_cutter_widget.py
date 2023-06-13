@@ -17,9 +17,7 @@ class VedoCutter(QWidget):
 
         self.mesh = None
 
-        self.plane_cutter_widget = None
-        self.box_cutter_widget = None
-        self.sphere_cutter_widget = None
+        self.cutter_widget = None
     
         self.vedo_message = Text2D(font='Calco', c='white')
         self.vedo_axes = None
@@ -39,8 +37,13 @@ class VedoCutter(QWidget):
 
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
         self.plt += self.vedo_message
-        self.plt += Text2D("vedo "+_vedo_version,
-                           pos='top-right', font='Calco', c='k5', s=0.5)
+        self.plt += Text2D(
+            "vedo "+_vedo_version,
+            pos='top-right',
+            font='Calco',
+            c='k5',
+            s=0.5,
+        )
         self.plt.show()
 
 
@@ -48,12 +51,8 @@ class VedoCutter(QWidget):
         """
         Get the currently selected layer from napari and display it in vedo
         """        
-        if self.box_cutter_widget:
-            self.plt.remove(self.box_cutter_widget)
-        if self.plane_cutter_widget:
-            self.plt.remove(self.plane_cutter_widget)
-        if self.sphere_cutter_widget:
-            self.plt.remove(self.sphere_cutter_widget)
+        if self.cutter_widget:
+            self.plt.remove(self.cutter_widget)
         self.plt.remove(self.mesh, self.vedo_axes)
 
         self.currently_selected_layer = self.napari_viewer.layers.selection.active
@@ -109,18 +108,18 @@ class VedoCutter(QWidget):
             return
 
         # remove old cutter
-        if self.box_cutter_widget is not None:
-            self.plt.remove(self.box_cutter_widget)
-            self.box_cutter_widget = None
+        if self.cutter_widget is not None:
+            self.plt.remove(self.cutter_widget)
+            self.cutter_widget = None
             self.vedo_message.text("cutter removed")
 
         # add new cutter
         if self.pushButton_box_cutter.isChecked():
-            self.box_cutter_widget = BoxCutter(
+            self.cutter_widget = BoxCutter(
                 self.mesh,
                 invert=self.checkBox_invert.isChecked(),
             )
-            self.plt.add(self.box_cutter_widget)
+            self.plt.add(self.cutter_widget)
             self.vedo_message.text(
                 "Press r to reset the cutter\n"
                 'Press spacebar to toggle the cutter on/off\n'

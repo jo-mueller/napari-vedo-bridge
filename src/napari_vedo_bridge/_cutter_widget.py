@@ -1,9 +1,11 @@
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import Plotter, Mesh, dataurl, Axes
+import vedo
 import os
 from pathlib import Path
 from qtpy import uic
 from qtpy.QtWidgets import QWidget
+from qtpy.QtWidgets import QFileDialog
 import numpy as np
 from magicgui import magicgui
 
@@ -30,6 +32,7 @@ class VedoCutter(QWidget):
         self.pushButton_box_cutter.clicked.connect(self.box_cutter_tool)
         self.pushButton_sphere_cutter.clicked.connect(self.sphere_cutter_tool)
         self.pushButton_plane_cutter.clicked.connect(self.plane_cutter_tool)
+        self.pushButton_load_mesh.clicked.connect(self._load_mesh)
 
         self.plane_cutter_widget = None
         self.box_cutter_widget = None
@@ -118,3 +121,21 @@ class VedoCutter(QWidget):
             self.sphere_cutter_widget = self.plt.cutter_widget
         else:
             self.sphere_cutter_widget.Off()
+
+    def _load_mesh(self):
+        """
+        Opens a file dialog to load a mesh file.
+        """
+        filename = QFileDialog.getOpenFileName(
+            caption='Open mesh file',
+            filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp)'
+        )
+
+        self.mesh = vedo.load(filename[0])
+        if len(self.plt.actors) > 0:
+            self.plt.clear(deep=True)
+    
+        #self.plt += Axes(self.mesh, c='white')
+        self.plt += self.mesh
+        self.plt.reset_camera()
+

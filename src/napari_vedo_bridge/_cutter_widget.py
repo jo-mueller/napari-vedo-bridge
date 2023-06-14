@@ -135,10 +135,7 @@ class VedoCutter(QWidget):
 
         # add new cutter
         if self.pushButton_box_cutter.isChecked():
-            self.cutter_widget = BoxCutter(
-                self.mesh,
-                invert=self.checkBox_invert.isChecked(),
-            )
+            self.cutter_widget = BoxCutter(self.mesh)
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
                 "Press r to reset the cutter\n"

@@ -24,7 +24,7 @@ class VedoCutter(QWidget):
         self.mesh_color = "yellow6"
         self.mesh_backcolor = "purple7"
         self.mesh_lighting = "shiny"
-    
+
         self.vedo_message = Text2D(font='Calco', c='white')
         self.vedo_axes = None
 
@@ -45,7 +45,7 @@ class VedoCutter(QWidget):
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
         self.plt += self.vedo_message
         self.plt += Text2D(
-            "vedo "+_vedo_version,
+            "vedo " + _vedo_version,
             pos='top-right',
             font='Calco',
             c='k5',
@@ -53,11 +53,10 @@ class VedoCutter(QWidget):
         )
         self.plt.show()
 
-
     def get_from_napari(self):
         """
         Get the currently selected layer from napari and display it in vedo
-        """        
+        """
         if self.cutter_widget:
             self.plt.remove(self.cutter_widget)
         self.plt.remove(self.mesh, self.vedo_axes)
@@ -67,12 +66,12 @@ class VedoCutter(QWidget):
             points = self.currently_selected_layer.data[0].astype(float)
             faces = self.currently_selected_layer.data[1].astype(int)
             scalars = self.currently_selected_layer.data[2]
-            self.mesh = Mesh([points, faces])  # only vertices and faces       
+            self.mesh = Mesh([points, faces])  # only vertices and faces
             if len(scalars) > 0:
                 self.mesh.pointdata['scalars'] = scalars
         else:
             # TEST mesh
-            self.mesh = Mesh(dataurl+"mouse_brain.stl")
+            self.mesh = Mesh(dataurl + "mouse_brain.stl")
 
         self.mesh.c(self.mesh_color)
         self.mesh.backcolor(self.mesh_backcolor)
@@ -138,7 +137,7 @@ class VedoCutter(QWidget):
                 'Press spacebar to toggle the cutter on/off\n'
                 'Press i to invert the selection\n',
             )
-        
+
         self.plt.render()
 
     def plane_cutter_tool(self):
@@ -166,7 +165,6 @@ class VedoCutter(QWidget):
         if self.cutter_widget is not None:
             self.plt.remove(self.cutter_widget)
             self.cutter_widget = None
-
 
     def _load_mesh(self):
         """

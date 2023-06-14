@@ -128,12 +128,8 @@ class VedoCutter(QWidget):
             self.plt.render()
             return
 
-        # remove old cutter
-        if self.cutter_widget is not None:
-            self.plt.remove(self.cutter_widget)
-            self.cutter_widget = None
-
         # add new cutter
+        self._remove_cutter()  # remove old cutter
         if self.pushButton_box_cutter.isChecked():
             self.cutter_widget = BoxCutter(self.mesh)
             self.plt.add(self.cutter_widget)
@@ -149,6 +145,7 @@ class VedoCutter(QWidget):
         """
         Add a plane cutter tool to the vedo plotter
         """
+        self._remove_cutter()  # remove old cutter
         self.vedo_message.text(
             "Coming soon!")
         self.plt.render()
@@ -158,10 +155,17 @@ class VedoCutter(QWidget):
         """
         Add a sphere cutter tool to the vedo plotter
         """
+        self._remove_cutter()  # remove old cutter
         self.vedo_message.text(
             "Coming soon!")
         self.plt.render()
         pass
+
+    def _remove_cutter(self):
+        # remove old cutter
+        if self.cutter_widget is not None:
+            self.plt.remove(self.cutter_widget)
+            self.cutter_widget = None
 
 
     def _load_mesh(self):

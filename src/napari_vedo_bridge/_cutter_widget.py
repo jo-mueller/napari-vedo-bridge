@@ -149,12 +149,18 @@ class VedoCutter(QWidget):
         """
         Add a plane cutter tool to the vedo plotter
         """
+        self.vedo_message.text(
+            "Coming soon!")
+        self.plt.render()
         pass
 
     def sphere_cutter_tool(self):
         """
         Add a sphere cutter tool to the vedo plotter
         """
+        self.vedo_message.text(
+            "Coming soon!")
+        self.plt.render()
         pass
 
 

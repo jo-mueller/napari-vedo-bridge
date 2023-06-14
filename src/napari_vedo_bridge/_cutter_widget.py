@@ -48,7 +48,7 @@ class VedoCutter(QWidget):
             "vedo " + _vedo_version,
             pos='top-right',
             font='Calco',
-            c='k5',
+            c='k6',
             s=0.5,
         )
         self.plt.show()
@@ -79,7 +79,8 @@ class VedoCutter(QWidget):
 
         try:
             if self.currently_selected_layer.name:
-                self.vedo_message.text(f"Mesh: {self.currently_selected_layer.name}")
+                self.mesh.name = self.currently_selected_layer.name
+                self.vedo_message.text(f"Mesh: {self.mesh.name}")
         except AttributeError:
             self.vedo_message.text("Test Mesh (mouse brain)")
 
@@ -95,18 +96,13 @@ class VedoCutter(QWidget):
         """
         Send the currently displayed mesh in vedo to napari
         """
-
-        # self.pushButton_box_cutter.setChecked(False)
-        # self.pushButton_sphere_cutter.setChecked(False)
-        # self.pushButton_plane_cutter.setChecked(False)
-
         points = self.mesh.points()
         faces = self.mesh.faces()
         if len(faces):
             if is_ragged(faces) or len(faces[0]):
-                self.mesh.triangulate()
-                faces = self.mesh.faces()
-                self.vedo_message.text("Mesh has been made triangular!")
+                tri_mesh = self.mesh.clone().triangulate()
+                faces = tri_mesh.faces()
+                self.vedo_message.text("Mesh has been forced triangular!")
                 self.plt.render()
         faces = np.asarray(faces, dtype=int)
         mesh_tuple = (points, faces)
@@ -115,8 +111,13 @@ class VedoCutter(QWidget):
             self.vedo_message.text("No mesh to send to napari!")
             self.plt.render()
             return
-
-        self.napari_viewer.add_surface(mesh_tuple)
+        
+        name = "vedo_mesh"
+        if self.mesh.name:
+            name = self.mesh.name
+        elif self.mesh.filename:
+            name = os.path.basename(self.mesh.filename).split(".")[0]
+        self.napari_viewer.add_surface(mesh_tuple, name=name)
 
     def box_cutter_tool(self):
         """
@@ -134,7 +135,7 @@ class VedoCutter(QWidget):
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
                 "Press r to reset the cutter\n"
-                'Press spacebar to toggle the cutter on/off\n'
+                'Press spacebar to toggle on/off\n'
                 'Press i to invert the selection\n',
             )
 
@@ -145,8 +146,7 @@ class VedoCutter(QWidget):
         Add a plane cutter tool to the vedo plotter
         """
         self._remove_cutter()  # remove old cutter
-        self.vedo_message.text(
-            "Coming soon!")
+        self.vedo_message.text("Coming soon!")
         self.plt.render()
         pass
 
@@ -155,16 +155,15 @@ class VedoCutter(QWidget):
         Add a sphere cutter tool to the vedo plotter
         """
         self._remove_cutter()  # remove old cutter
-        self.vedo_message.text(
-            "Coming soon!")
+        self.vedo_message.text("Coming soon!")
         self.plt.render()
         pass
 
     def _remove_cutter(self):
-        # remove old cutter
-        if self.cutter_widget is not None:
+        if self.cutter_widget:
             self.plt.remove(self.cutter_widget)
             self.cutter_widget = None
+        self.plt.render()
 
     def _load_mesh(self):
         """
@@ -172,15 +171,16 @@ class VedoCutter(QWidget):
         """
         filename = QFileDialog.getOpenFileName(
             caption='Open mesh file',
-            filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp)'
+            filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp *.xml *.off *.gz)'
         )
+        if len(filename) == 0:
+            return
 
         self.pushButton_box_cutter.setChecked(False)
         self.pushButton_sphere_cutter.setChecked(False)
         self.pushButton_plane_cutter.setChecked(False)
 
-        if self.cutter_widget:
-            self.plt.remove(self.cutter_widget)
+        self._remove_cutter()
         self.plt.remove(self.mesh, self.vedo_axes)
 
         self.mesh = Mesh(filename[0])
@@ -190,6 +190,8 @@ class VedoCutter(QWidget):
         self.mesh.lighting(self.mesh_lighting)
 
         self.vedo_axes = Axes(self.mesh, c='white')
+        name = os.path.basename(filename[0])
+        self.vedo_message.text(f"Loaded Mesh: {name}")
 
         self.plt += [self.mesh, self.vedo_axes]
         self.plt.reset_camera().render()

@@ -48,7 +48,7 @@ class VedoCutter(QWidget):
             "vedo " + _vedo_version,
             pos='top-right',
             font='Calco',
-            c='k6',
+            c='k5',
             s=0.5,
         )
         self.plt.show()
@@ -135,8 +135,8 @@ class VedoCutter(QWidget):
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
                 "Press r to reset the cutter\n"
-                'Press spacebar to toggle on/off\n'
-                'Press i to invert the selection\n',
+                'Press i to toggle it on/off\n'
+                'Press u to invert the selection\n',
             )
 
         self.plt.render()

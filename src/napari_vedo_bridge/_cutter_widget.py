@@ -9,7 +9,7 @@ import numpy as np
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import __version__ as _vedo_version
 from vedo import Plotter, Text2D, Mesh, Axes, dataurl
-from vedo import BoxCutter, PlaneCutter#, SphereCutter
+from vedo import BoxCutter, PlaneCutter, SphereCutter
 from vedo.utils import is_ragged
 
 
@@ -139,7 +139,6 @@ class VedoCutter(QWidget):
                 'Press i to toggle it on/off\n'
                 'Press u to invert the selection\n',
             )
-
         self.plt.render()
 
     def plane_cutter_tool(self):
@@ -161,17 +160,28 @@ class VedoCutter(QWidget):
                 'Press i to toggle it on/off\n'
                 'Press u to invert the selection\n',
             )
-
         self.plt.render()
 
     def sphere_cutter_tool(self):
         """
         Add a sphere cutter tool to the vedo plotter
         """
+        if not self.mesh:
+            self.vedo_message.text("Please load a mesh first")
+            self.plt.render()
+            return
+
+        # add new cutter
         self._remove_cutter()  # remove old cutter
-        self.vedo_message.text("Coming soon!")
+        if self.pushButton_sphere_cutter.isChecked():
+            self.cutter_widget = SphereCutter(self.mesh)
+            self.plt.add(self.cutter_widget)
+            self.vedo_message.text(
+                "Press r to reset the cutter\n"
+                'Press i to toggle it on/off\n'
+                'Press u to invert the selection\n',
+            )
         self.plt.render()
-        pass
 
     def _remove_cutter(self):
         if self.cutter_widget:

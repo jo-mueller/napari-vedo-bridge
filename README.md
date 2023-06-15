@@ -7,7 +7,26 @@
 [![codecov](https://codecov.io/gh/jo-mueller/napari-vedo-bridge/branch/main/graph/badge.svg)](https://codecov.io/gh/jo-mueller/napari-vedo-bridge)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-vedo-bridge)](https://napari-hub.org/plugins/napari-vedo-bridge)
 
-Transfer mesh data between napari and vedo for interactive processing
+To be able to use interactive processing of meshes in napari, this plugin provides a bridge to the vedo library. It allows to transfer meshes between napari and vedo and to use the interactive processing capabilities of vedo in napari. 
+
+## Interactive mesh cutting
+To interactively cut meshes in the napari-vedo MeshCutter, install the plugin (see below) and open the plugin it from the napari plugins menu (`Plugins > Mesh Cutter (napari-vedo-bridge)`). 
+
+To cut meshes you can use the following cutters:
+- `PlaneCutter`: cuts a mesh with a plane
+- `SphereCutter`: cuts a mesh with a sphere
+- `BoxCutter`: cuts a mesh with a box
+
+![](docs/imgs/screenshot_box_cutter.png)
+
+To send and get data into and from the plugin, you can:
+
+- Retrieve the current mesh from napari (click `Retrieve mesh from napari`) - this imports the **currently selected mesh layer** from napari
+- Load a mesh from file (click `Load mesh`)
+- Send a mesh to napari (click `Send back to napari`) - this creates a new mesh layer in napari
+
+
+
 
 ----------------------------------
 

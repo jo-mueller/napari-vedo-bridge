@@ -146,8 +146,6 @@ class VedoCutter(QWidget):
         """
         Add a plane cutter tool to the vedo plotter
         """
-        print("plane cutter tool")
-
         if not self.mesh:
             self.vedo_message.text("Please load a mesh first")
             self.plt.render()
@@ -155,7 +153,7 @@ class VedoCutter(QWidget):
 
         # add new cutter
         self._remove_cutter()  # remove old cutter
-        if self.pushButton_box_cutter.isChecked():
+        if self.pushButton_plane_cutter.isChecked():
             self.cutter_widget = PlaneCutter(self.mesh)
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(

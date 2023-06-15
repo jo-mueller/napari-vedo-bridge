@@ -137,7 +137,7 @@ class VedoCutter(QWidget):
             self.vedo_message.text(
                 "Press r to reset the cutter\n"
                 'Press i to toggle it on/off\n'
-                'Press u to invert the selection\n',
+                'Press u to invert the selection',
             )
         self.plt.render()
 
@@ -159,6 +159,7 @@ class VedoCutter(QWidget):
                 "Press r to reset the cutter\n"
                 'Press i to toggle it on/off\n'
                 'Press u to invert the selection\n',
+                'Press xyz to reset the axis',
             )
         self.plt.render()
 
@@ -179,7 +180,7 @@ class VedoCutter(QWidget):
             self.vedo_message.text(
                 "Press r to reset the cutter\n"
                 'Press i to toggle it on/off\n'
-                'Press u to invert the selection\n',
+                'Press u to invert the selection',
             )
         self.plt.render()
 

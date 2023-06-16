@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>396</height>
+    <width>918</width>
+    <height>278</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,21 +19,8 @@
      <property name="title">
       <string>Cutting tools</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="pushButton_plane_cutter">
-        <property name="text">
-         <string>Plane cutter</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">buttonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
        <widget class="QPushButton" name="pushButton_box_cutter">
         <property name="text">
          <string>Box cutter</string>
@@ -46,7 +33,7 @@
         </attribute>
        </widget>
       </item>
-      <item>
+      <item row="0" column="2">
        <widget class="QPushButton" name="pushButton_sphere_cutter">
         <property name="text">
          <string>Sphere cutter</string>
@@ -59,35 +46,118 @@
         </attribute>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_plane_cutter">
+        <property name="text">
+         <string>Plane cutter</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_extract_largest">
+        <property name="text">
+         <string>Extract largest</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Compute</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_compute_curvature">
+        <property name="text">
+         <string>Curvature</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_compute_face_quality">
+        <property name="text">
+         <string>Face Quality</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_compute_area">
+        <property name="text">
+         <string>Surface Area</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_compute_volume">
+        <property name="text">
+         <string>Volume</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="minimumSize">
+      <size>
+       <width>900</width>
+       <height>10</height>
+      </size>
+     </property>
      <property name="title">
       <string>Data</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_save_mesh">
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_send_back">
+        <property name="text">
+         <string>Send back  to napari</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_get_from_napari">
+        <property name="text">
+         <string>Retrieve from napari</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="pushButton_load_mesh">
         <property name="text">
-         <string>Load mesh</string>
+         <string>Load</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_get_from_napari">
-        <property name="text">
-         <string>Retrieve mesh from napari</string>
+      <item row="0" column="1" rowspan="2">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QPushButton" name="pushButton_send_back">
-        <property name="text">
-         <string>Send back to napari</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>10</width>
+          <height>40</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>

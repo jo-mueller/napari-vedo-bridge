@@ -4,13 +4,14 @@ from qtpy import uic
 from qtpy.QtWidgets import QWidget
 from qtpy.QtWidgets import QFileDialog
 import numpy as np
-# from magicgui import magicgui
+# from magicgui import magicgui  # pyqt5-tools designer
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import __version__ as _vedo_version
-from vedo import Plotter, Text2D, Mesh, Axes, dataurl
+from vedo import Plotter, Points, Text2D, Mesh, Axes, dataurl, settings
 from vedo import BoxCutter, PlaneCutter, SphereCutter
 from vedo.utils import is_ragged
+from vedo.pyplot import histogram
 
 
 class VedoCutter(QWidget):
@@ -22,11 +23,13 @@ class VedoCutter(QWidget):
 
         self.cutter_widget = None
 
-        self.mesh_color = "yellow6"
-        self.mesh_backcolor = "purple7"
+        settings.default_font = "Calco"
+        self.mesh_color = "yellow7"
+        self.mesh_backcolor = "purple8"
         self.mesh_lighting = "shiny"
+        self.cmap_name = "RdYlBu"
 
-        self.vedo_message = Text2D(font='Calco', c='white')
+        self.vedo_message = Text2D(pos='bottom-left', c='white', s=0.9)
         self.vedo_axes = None
 
         self.napari_viewer = napari_viewer
@@ -34,6 +37,7 @@ class VedoCutter(QWidget):
 
         self.vtkWidget = QVTKRenderWindowInteractor()
         self.layout().insertWidget(0, self.vtkWidget)
+        self.plot_frame = None
 
         self.pushButton_send_back.clicked.connect(self.send_to_napari)
         self.pushButton_get_from_napari.clicked.connect(self.get_from_napari)
@@ -42,16 +46,22 @@ class VedoCutter(QWidget):
         self.pushButton_sphere_cutter.clicked.connect(self.sphere_cutter_tool)
         self.pushButton_plane_cutter.clicked.connect(self.plane_cutter_tool)
         self.pushButton_load_mesh.clicked.connect(self._load_mesh)
+        self.pushButton_save_mesh.clicked.connect(self._save_mesh)
+        self.pushButton_extract_largest.clicked.connect(self._extract_largest)
+        self.pushButton_compute_curvature.clicked.connect(self._compute_curvature)
+        self.pushButton_compute_face_quality.clicked.connect(self._compute_face_quality)
+        self.pushButton_compute_area.clicked.connect(self._compute_area)
+        self.pushButton_compute_volume.clicked.connect(self._compute_volume)
 
         self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
         self.plt += self.vedo_message
         self.plt += Text2D(
             "vedo " + _vedo_version,
-            pos='top-right',
-            font='Calco',
+            pos='bottom-right',
             c='k5',
             s=0.5,
         )
+        self.plt.interactor.RemoveAllObservers()
         self.plt.show()
 
     def get_from_napari(self):
@@ -67,6 +77,8 @@ class VedoCutter(QWidget):
             points = self.currently_selected_layer.data[0].astype(float)
             faces = self.currently_selected_layer.data[1].astype(int)
             scalars = self.currently_selected_layer.data[2]
+            # flip y axis
+            points[:,1] = -points[:,1]
             self.mesh = Mesh([points, faces])  # only vertices and faces
             if len(scalars) > 0:
                 self.mesh.pointdata['scalars'] = scalars
@@ -84,6 +96,7 @@ class VedoCutter(QWidget):
                 self.vedo_message.text(f"Mesh: {self.mesh.name}")
         except AttributeError:
             self.vedo_message.text("Test Mesh (mouse brain)")
+            self.mesh.name = "mouse brain"
 
         self.pushButton_box_cutter.setChecked(False)
         self.pushButton_sphere_cutter.setChecked(False)
@@ -97,7 +110,8 @@ class VedoCutter(QWidget):
         """
         Send the currently displayed mesh in vedo to napari
         """
-        points = self.mesh.points()
+        points = self.mesh.points().copy()
+        points[:,1] = -points[:,1] # flip y axis
         faces = self.mesh.faces()
         if len(faces):
             if is_ragged(faces) or len(faces[0]):
@@ -188,6 +202,11 @@ class VedoCutter(QWidget):
         if self.cutter_widget:
             self.plt.remove(self.cutter_widget)
             self.cutter_widget = None
+        self.vedo_message.text(
+            f"Mesh: {self.mesh.name}\n"
+            f"Number of points: {self.mesh.npoints}\n"
+            f"Number of faces: {self.mesh.ncells}"
+        )
         self.plt.render()
 
     def _load_mesh(self):
@@ -198,15 +217,14 @@ class VedoCutter(QWidget):
             caption='Open mesh file',
             filter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp *.xml *.off *.gz)'
         )
-        if len(filename) == 0:
+        if not filename[0]:
             return
 
         self.pushButton_box_cutter.setChecked(False)
         self.pushButton_sphere_cutter.setChecked(False)
         self.pushButton_plane_cutter.setChecked(False)
 
-        self._remove_cutter()
-        self.plt.remove(self.mesh, self.vedo_axes)
+        self.plt.remove(self.mesh, self.vedo_axes, self.plot_frame)
 
         self.mesh = Mesh(filename[0])
 
@@ -216,7 +234,105 @@ class VedoCutter(QWidget):
 
         self.vedo_axes = Axes(self.mesh, c='white')
         name = os.path.basename(filename[0])
-        self.vedo_message.text(f"Loaded Mesh: {name}")
+        self.mesh.name = name
+        self._remove_cutter()
 
         self.plt += [self.mesh, self.vedo_axes]
         self.plt.reset_camera().render()
+
+    def _extract_largest(self):
+        if self.mesh:
+            self._remove_cutter()
+            self.plt.remove(self.mesh, self.vedo_axes, self.plot_frame)
+            name = self.mesh.name
+            self.mesh = self.mesh.extract_largest_region()
+            self.mesh.name = name # keep the same name
+            self.vedo_axes = Axes(self.mesh, c='white')
+            self.plt.add(self.mesh, self.vedo_axes)
+            self.plt.render()
+
+    def _compute_curvature(self):
+        if self.mesh:
+            self.mesh.compute_curvature(method=1)
+            self.mesh.cmap(self.cmap_name)#.print()
+            histo = histogram(
+                self.mesh.pointdata["Mean_Curvature"], 
+                c=self.cmap_name,
+                ac="w", gap=0, aspect=2, 
+                axes={
+                    "xtitle": " ",
+                    "htitle": "Mean Curvature",
+                    "htitle_offset":(0, 0.02, 0),
+                    "text_scale": 1.75, 
+                    "number_of_divisions": 3,
+                    "show_ticks": False,
+                },
+            )
+            self._remove_cutter()
+            self.plt.remove(self.plot_frame)
+            self.plot_frame = histo.as2d(pos="top-right", scale=0.5)
+            self.plt.add(self.plot_frame)
+            self.plt.render()
+
+    def _compute_face_quality(self):
+        if self.mesh:
+            self.mesh.compute_quality()
+            self.mesh.cmap(self.cmap_name, on="cells")#.print()
+            histo = histogram(
+                self.mesh.celldata["Quality"], 
+                c=self.cmap_name,
+                ac="w", gap=0, aspect=2, 
+                axes={
+                    "xtitle": " ",
+                    "htitle": "Quality of Polygonal Faces",
+                    "htitle_offset":(0, 0.02, 0),
+                    "text_scale": 1.75, 
+                    "number_of_divisions": 3,
+                    "show_ticks": False,
+                },
+            )
+            self._remove_cutter()
+            self.plt.remove(self.plot_frame)
+            self.plot_frame = histo.as2d(pos="top-right", scale=0.5)
+            self.plt.add(self.plot_frame)
+            self.plt.render()
+
+    def _compute_area(self):
+        if self.mesh:
+            area = self.mesh.clone().triangulate().area()
+            self.vedo_message.text(f"Surface area: {area:.4f}")
+            self.plt.render()
+    
+    def _compute_volume(self):
+        if self.mesh:
+            volume = self.mesh.clone().triangulate().volume()
+            closed = self.mesh.is_closed()
+            manifold = self.mesh.is_manifold()
+            self.vedo_message.text(
+                f"Mesh volume: {volume:.3f}"
+                f"\nis closed: {closed}"
+                f"\nis manifold: {manifold}"
+            )
+            self.plt.render()
+    
+    # def _compute_reconstruction(self):
+    #     if self.mesh:
+    #         pts = self.mesh.points()
+    #         reco = Points(pts).reconstruct_surface()
+    #         self.plt.remove(self.mesh).add(reco)
+    #         name = self.mesh.name
+    #         self.mesh = reco
+    #         self.mesh.name = name
+    #         self.plt.render()
+
+    def _save_mesh(self):
+        filename = QFileDialog.getSaveFileName(
+            caption='Save mesh file',
+            initialFilter='Mesh files (*.obj *.ply *.stl *.vtk *.vtp *.xml *.off *.gz)'
+        )
+        if not filename[0]:
+            return
+        self.mesh.write(filename[0])
+        self.vedo_message.text(f"Saved Mesh as: {filename[0]}")
+        self.plt.render()
+

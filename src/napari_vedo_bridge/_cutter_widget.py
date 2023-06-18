@@ -8,7 +8,7 @@ import numpy as np
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import __version__ as _vedo_version
-from vedo import Plotter, Points, Text2D, Mesh, Axes, dataurl, settings
+from vedo import Plotter, Text2D, Mesh, Axes, dataurl, settings
 from vedo import BoxCutter, PlaneCutter, SphereCutter
 from vedo.utils import is_ragged
 from vedo.pyplot import histogram
@@ -35,9 +35,10 @@ class VedoCutter(QWidget):
         self.napari_viewer = napari_viewer
         uic.loadUi(os.path.join(Path(__file__).parent, "./vedo_extension.ui"), self)
 
-        self.vtkWidget = QVTKRenderWindowInteractor()
-        self.layout().insertWidget(0, self.vtkWidget)
+        self.vtk_widget = QVTKRenderWindowInteractor()
+        self.layout().insertWidget(0, self.vtk_widget)
         self.plot_frame = None
+        self.currently_selected_layer = None
 
         self.pushButton_send_back.clicked.connect(self.send_to_napari)
         self.pushButton_get_from_napari.clicked.connect(self.get_from_napari)
@@ -53,7 +54,7 @@ class VedoCutter(QWidget):
         self.pushButton_compute_area.clicked.connect(self._compute_area)
         self.pushButton_compute_volume.clicked.connect(self._compute_volume)
 
-        self.plt = Plotter(qt_widget=self.vtkWidget, bg='bb', interactive=False)
+        self.plt = Plotter(qt_widget=self.vtk_widget, bg='bb', interactive=False)
         self.plt += self.vedo_message
         self.plt += Text2D(
             "vedo " + _vedo_version,
@@ -126,7 +127,7 @@ class VedoCutter(QWidget):
             self.vedo_message.text("No mesh to send to napari!")
             self.plt.render()
             return
-        
+
         name = "vedo_mesh"
         if self.mesh.name:
             name = self.mesh.name
@@ -254,11 +255,16 @@ class VedoCutter(QWidget):
     def _compute_curvature(self):
         if self.mesh:
             self.mesh.compute_curvature(method=1)
-            self.mesh.cmap(self.cmap_name)#.print()
+            arr = self.mesh.pointdata["Mean_Curvature"]
+            mean = np.mean(arr)
+            std = np.std(arr)
+            n = 1
+            self.mesh.cmap(self.cmap_name, vmin=mean-n*std, vmax=mean+n*std)
             histo = histogram(
-                self.mesh.pointdata["Mean_Curvature"], 
+                arr,
                 c=self.cmap_name,
-                ac="w", gap=0, aspect=2, 
+                ac="w", gap=0, aspect=2,
+                xlim=[mean-n*std, mean+n*std],
                 axes={
                     "xtitle": " ",
                     "htitle": "Mean Curvature",
@@ -302,7 +308,7 @@ class VedoCutter(QWidget):
             area = self.mesh.clone().triangulate().area()
             self.vedo_message.text(f"Surface area: {area:.4f}")
             self.plt.render()
-    
+
     def _compute_volume(self):
         if self.mesh:
             volume = self.mesh.clone().triangulate().volume()
@@ -314,16 +320,6 @@ class VedoCutter(QWidget):
                 f"\nis manifold: {manifold}"
             )
             self.plt.render()
-    
-    # def _compute_reconstruction(self):
-    #     if self.mesh:
-    #         pts = self.mesh.points()
-    #         reco = Points(pts).reconstruct_surface()
-    #         self.plt.remove(self.mesh).add(reco)
-    #         name = self.mesh.name
-    #         self.mesh = reco
-    #         self.mesh.name = name
-    #         self.plt.render()
 
     def _save_mesh(self):
         filename = QFileDialog.getSaveFileName(
@@ -335,4 +331,3 @@ class VedoCutter(QWidget):
         self.mesh.write(filename[0])
         self.vedo_message.text(f"Saved Mesh as: {filename[0]}")
         self.plt.render()
-

@@ -17,7 +17,7 @@ To cut meshes you can use the following cutters:
 - `SphereCutter`: cuts a mesh with a sphere
 - `BoxCutter`: cuts a mesh with a box
 
-![](docs/imgs/screenshot_box_cutter.png)
+![](https://github.com/jo-mueller/napari-vedo-bridge/raw/main/docs/imgs/screenshot_box_cutter.png)
 
 To send and get data into and from the plugin, you can:
 

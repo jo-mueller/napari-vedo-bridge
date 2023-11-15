@@ -63,6 +63,8 @@ class VedoCutter(QWidget):
             s=0.5,
         )
         self.plt.interactor.RemoveAllObservers()
+        # self.plt.interactor.AddObserver('KeyPressEvent', self.plt._keypress)
+        # self.plt.interactor.AddObserver("LeftButtonPressEvent", self.plt._mouseleftclick)
         self.plt.show()
 
     def get_from_napari(self):
@@ -111,13 +113,13 @@ class VedoCutter(QWidget):
         """
         Send the currently displayed mesh in vedo to napari
         """
-        points = self.mesh.points().copy()
+        points = self.mesh.vertices.copy()
         points[:,1] = -points[:,1] # flip y axis
-        faces = self.mesh.faces()
+        faces = self.mesh.cells
         if len(faces):
             if is_ragged(faces) or len(faces[0]):
                 tri_mesh = self.mesh.clone().triangulate()
-                faces = tri_mesh.faces()
+                faces = tri_mesh.cells
                 self.vedo_message.text("Mesh has been forced triangular!")
                 self.plt.render()
         faces = np.asarray(faces, dtype=int)
@@ -150,9 +152,10 @@ class VedoCutter(QWidget):
             self.cutter_widget = BoxCutter(self.mesh)
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
-                "Press r to reset the cutter\n"
-                'Press i to toggle it on/off\n'
-                'Press u to invert the selection',
+                "Press\n"
+                " r to reset the cutter\n"
+                ' i to toggle it on/off\n'
+                ' u to invert the selection',
             )
         self.plt.render()
 
@@ -171,10 +174,11 @@ class VedoCutter(QWidget):
             self.cutter_widget = PlaneCutter(self.mesh)
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
-                "Press r to reset the cutter\n"
-                'Press i to toggle it on/off\n'
-                'Press u to invert the selection\n'
-                'Press xyz to reset the axis',
+                "Press\n"
+                " r to reset the cutter\n"
+                ' i to toggle it on/off\n'
+                ' u to invert the selection\n'
+                ' xyz to reset the axis',
             )
         self.plt.render()
 
@@ -193,9 +197,10 @@ class VedoCutter(QWidget):
             self.cutter_widget = SphereCutter(self.mesh)
             self.plt.add(self.cutter_widget)
             self.vedo_message.text(
-                "Press r to reset the cutter\n"
-                'Press i to toggle it on/off\n'
-                'Press u to invert the selection',
+                "Press\n"
+                " r to reset the cutter\n"
+                ' i to toggle it on/off\n'
+                ' u to invert the selection',
             )
         self.plt.render()
 
@@ -276,7 +281,7 @@ class VedoCutter(QWidget):
             )
             self._remove_cutter()
             self.plt.remove(self.plot_frame)
-            self.plot_frame = histo.as2d(pos="top-right", scale=0.5)
+            self.plot_frame = histo.clone2d(pos="top-right", scale=0.5)
             self.plt.add(self.plot_frame)
             self.plt.render()
 
@@ -299,7 +304,7 @@ class VedoCutter(QWidget):
             )
             self._remove_cutter()
             self.plt.remove(self.plot_frame)
-            self.plot_frame = histo.as2d(pos="top-right", scale=0.5)
+            self.plot_frame = histo.clone2d(pos="top-right", scale=0.5)
             self.plt.add(self.plot_frame)
             self.plt.render()
 

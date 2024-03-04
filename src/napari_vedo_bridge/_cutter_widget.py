@@ -54,7 +54,7 @@ class VedoCutter(QWidget):
         self.pushButton_compute_area.clicked.connect(self._compute_area)
         self.pushButton_compute_volume.clicked.connect(self._compute_volume)
 
-        self.plt = Plotter(qt_widget=self.vtk_widget, bg='bb', interactive=False)
+        self.plt = Plotter(qt_widget=self.vtk_widget, bg='bb')
         self.plt += self.vedo_message
         self.plt += Text2D(
             "vedo " + _vedo_version,
@@ -264,7 +264,8 @@ class VedoCutter(QWidget):
             mean = np.mean(arr)
             std = np.std(arr)
             n = 1
-            self.mesh.cmap(self.cmap_name, vmin=mean-n*std, vmax=mean+n*std)
+            self.mesh.cmap(
+                self.cmap_name, "Mean_Curvature", on="points", vmin=mean-n*std, vmax=mean+n*std)
             histo = histogram(
                 arr,
                 c=self.cmap_name,
@@ -281,14 +282,14 @@ class VedoCutter(QWidget):
             )
             self._remove_cutter()
             self.plt.remove(self.plot_frame)
-            self.plot_frame = histo.clone2d(pos="top-right", scale=0.5)
+            self.plot_frame = histo.clone2d(pos="top-right", size=0.5)
             self.plt.add(self.plot_frame)
             self.plt.render()
 
     def _compute_face_quality(self):
         if self.mesh:
             self.mesh.compute_quality()
-            self.mesh.cmap(self.cmap_name, on="cells")#.print()
+            self.mesh.cmap(self.cmap_name, "Quality", on="cells")
             histo = histogram(
                 self.mesh.celldata["Quality"], 
                 c=self.cmap_name,
@@ -304,7 +305,7 @@ class VedoCutter(QWidget):
             )
             self._remove_cutter()
             self.plt.remove(self.plot_frame)
-            self.plot_frame = histo.clone2d(pos="top-right", scale=0.5)
+            self.plot_frame = histo.clone2d(pos="top-right", size=0.5)
             self.plt.add(self.plot_frame)
             self.plt.render()
 

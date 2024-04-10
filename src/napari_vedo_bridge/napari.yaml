@@ -2,11 +2,23 @@ name: napari-vedo-bridge
 display_name: napari vedo bridge
 contributions:
   commands:
-    - id: napari-vedo-bridge.cutter_widget
-      python_name: napari_vedo_bridge._cutter_widget:VedoCutter
-      title: Interactive mesh cutting with Vedo
+  - id: napari-vedo-bridge.cutter_widget
+    python_name: napari_vedo_bridge._cutter_widget:VedoCutter
+    title: Interactive mesh cutting with Vedo
 
+  - id: napari-vedo-bridge.subdivide
+    python_name: napari_vedo_bridge.vedo_functions:subdivide
+    title: subdivide
+  - id: napari-vedo-bridge.decimate
+    python_name: napari_vedo_bridge.vedo_functions:decimate
+    title: decimate
   widgets:
-    - command: napari-vedo-bridge.cutter_widget
-      display_name: Mesh cutter
+  - command: napari-vedo-bridge.cutter_widget
+    display_name: Mesh cutter
 
+  - command: napari-vedo-bridge.subdivide
+    autogenerate: true
+    display_name: subdivide
+  - command: napari-vedo-bridge.decimate
+    autogenerate: true
+    display_name: decimate

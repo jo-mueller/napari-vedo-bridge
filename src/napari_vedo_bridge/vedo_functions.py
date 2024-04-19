@@ -1,6 +1,7 @@
 import vedo
 import inspect
 from functools import wraps
+from typing_extensions import Self
 import pandas as pd
 import numpy as np
 import ruamel.yaml
@@ -8,6 +9,8 @@ from pathlib import Path
 
 __all__ = [
     'decimate',
+    'decimate_pro',
+    'decimate_binned',
     'subdivide',    
 ]
 
@@ -31,8 +34,7 @@ def make_napari_compatible(func):
 
     @wraps(func)
     def wrapper(surface_data, *args, **kwargs):
-
-        mesh = vedo.Mesh(surface_data)
+        mesh = vedo.Mesh((surface_data[0], surface_data[1]))
         result = func(mesh, *args, **kwargs)
         return (result.vertices, np.asarray(result.cells))
 
@@ -52,7 +54,7 @@ for name, func in functions_dict.items():
         continue
 
     signature = inspect.signature(func)
-    if signature.return_annotation == 'Mesh':
+    if signature.return_annotation == Self:
         globals()[name] = make_napari_compatible(func)
 
         description = func.__doc__.split('\n')

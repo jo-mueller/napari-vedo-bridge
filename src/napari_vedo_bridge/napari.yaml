@@ -6,7 +6,27 @@ contributions:
       python_name: napari_vedo_bridge._cutter_widget:VedoCutter
       title: Interactive mesh cutting with Vedo
 
+    - id: napari-vedo-bridge.write_points
+      python_name: napari_vedo_bridge._writer:write_points
+      title: Save points layer to vtp
+    - id: napari-vedo-bridge.load_points
+      python_name: napari_vedo_bridge._reader:get_reader
+      title: Load points from disk
+
   widgets:
     - command: napari-vedo-bridge.cutter_widget
       display_name: Mesh cutter
+
+  writers:
+    - command: napari-vedo-bridge.write_points
+      layer_types:
+      - points
+      filename_extensions:
+      - .vtp
+
+  readers:
+    - command: napari-vedo-bridge.load_points
+      filename_patterns:
+      - '*.vtp'
+      accepts_directories: true
 

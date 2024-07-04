@@ -10,6 +10,7 @@ def write_points(
     import vedo
     import os
     from pathlib import Path
+    import tqdm
 
     layer = Layer.create(layer_data, attributes, 'points')
     Converter = TimelapseConverter()
@@ -23,7 +24,9 @@ def write_points(
     # if there is only one timepoint, just write it
     if len(list_of_layers) == 1:
         points = vedo.Points(list_of_layers[0].data)
-        points.pointdata = list_of_layers[0].features
+
+        for key in dict(list_of_layers[0].features).keys():
+            points.pointdata[key] = list_of_layers[0].features[key]
         vedo.write(points, path)
         return [path]
     
@@ -31,9 +34,10 @@ def write_points(
     else:
         os.makedirs(Path(path).parent / Path(path).stem, exist_ok=True)
         output_paths = []
-        for i, layer in enumerate(list_of_layers):
+        for i, layer in tqdm.tqdm(enumerate(list_of_layers), total=len(list_of_layers)):
             points = vedo.Points(layer.data[:, :3])
-            points.pointdata = layer.features
+            for key in dict(list_of_layers[0].features).keys():
+                points.pointdata[key] = list_of_layers[i].features[key]
 
             output_path = str(Path(path).parent / Path(path).stem / "{:03d}.vtp".format(i))
             output_paths.append(output_path)

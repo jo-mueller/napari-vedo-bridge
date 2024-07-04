@@ -18,43 +18,57 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
     import vedo
     import pandas as pd
     import os
+    import tqdm
     from napari_timelapse_processor import TimelapseConverter
     from napari.layers import Layer
 
+    # whether directory, list of files or single file is passed
     if os.path.isdir(path):
         path = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.vtp')]
-
-    if isinstance(path, str):
+    elif isinstance(path, list):
+        pass
+    elif isinstance(path, str):
         path = [path]
 
     layers = []
     if len(path) == 1:
         points = vedo.load(path[0])
-        print(points.pointdata)
         layer = (
             points.vertices,
-            {
-                'features': pd.DataFrame(dict(points.pointdata)),
-                'size': 0.5
-                },
+            {'features': pd.DataFrame(dict(points.pointdata))},
             'points'
         )
-        print(layer)
-        return [layer]
+
+        data = layer.data
+        properties = {
+            'features': layer.features,
+            'size': 0.5
+        }
 
     else:
-        print('Loading multiple files')
-        Converter = TimelapseConverter()
-        for i, p in enumerate(path):
+        # read all the files, create a layer from each
+        for i, p in tqdm.tqdm(enumerate(path), total=len(path)):
             points = vedo.load(p)
             layer = Layer.create(
                 points.vertices,
-                pd.DataFrame(points.pointdata),
+                {
+                    'features': pd.DataFrame(dict(points.pointdata)),
+                    'size': 0.5,
+                    },
                 'points')
             layers.append(layer)
 
-        print('Stacking data')
-        layer_4d = Converter.stack_data(layers)
+        # Stack output layer and return
+        Converter = TimelapseConverter()
+        layer_4d = Converter.stack_data(layers, layertype=Layer)
+        data = layer_4d.data
+        properties = {
+            'features': layer_4d.features,
+            'size': 0.5
+        }
 
-        print('Returning data')
-        return [layer_4d.data, {'features': layer_4d.features}, 'points']
+    # color the pointclloud by the first detected feature
+    if not properties['features'].empty:
+        properties['face_color'] = properties['features'].columns[0]
+    
+    return [(data, properties, 'points')]

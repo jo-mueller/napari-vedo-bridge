@@ -9,9 +9,16 @@ contributions:
     - id: napari-vedo-bridge.write_points
       python_name: napari_vedo_bridge._writer:write_points
       title: Save points layer to vtp
+    - id: napari-vedo-bridge.write_surfaces
+      python_name: napari_vedo_bridge._writer:write_surfaces
+      title: Save surface layer to vtp
+
     - id: napari-vedo-bridge.load_points
       python_name: napari_vedo_bridge._reader:get_reader
       title: Load points from disk
+    - id: napari-vedo-bridge.load_surfaces
+      python_name: napari_vedo_bridge._reader:get_reader
+      title: Load surfaces from disk
 
   widgets:
     - command: napari-vedo-bridge.cutter_widget
@@ -20,7 +27,12 @@ contributions:
   writers:
     - command: napari-vedo-bridge.write_points
       layer_types:
-      - points
+      - points?
+      filename_extensions:
+      - .vtp
+    - command: napari-vedo-bridge.write_surfaces
+      layer_types:
+      - surface
       filename_extensions:
       - .vtp
 

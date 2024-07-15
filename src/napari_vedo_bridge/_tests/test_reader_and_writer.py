@@ -25,10 +25,6 @@ def test_writer_reader_mesh_4d(create_4d_mesh):
     layer_input.features = None
     ldtuple = Layer.as_layer_data_tuple(layer_input)
 
-    print(ldtuple[0])
-    print(ldtuple[1])
-    print(ldtuple[2])
-
     output_paths = write_surfaces('test.vtp', ldtuple[0], ldtuple[1])
     assert len(output_paths) == 10
 

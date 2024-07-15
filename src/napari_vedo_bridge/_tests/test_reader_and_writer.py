@@ -12,8 +12,8 @@ def create_4d_mesh():
     Converter = TimelapseConverter()
     return Converter.stack_data(spheres_tuples, layertype='napari.types.SurfaceData')
 
-
-def test_writer_reader_mesh_4d(create_4d_mesh):
+@pytest.mark.parametrize("formats", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
+def test_writer_reader_mesh_4d(create_4d_mesh, formats):
     from napari.layers import Layer, Surface
     from pathlib import Path
     import numpy as np

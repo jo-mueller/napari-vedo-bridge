@@ -35,6 +35,10 @@ contributions:
       - surface
       filename_extensions:
       - .vtp
+      - .vtk
+      - .obj
+      - .stl
+      - .ply
 
   readers:
     - command: napari-vedo-bridge.load_points

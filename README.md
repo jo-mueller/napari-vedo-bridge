@@ -9,6 +9,18 @@
 
 To be able to use interactive processing of meshes in napari, this plugin provides a bridge to the vedo library. It allows to transfer meshes between napari and vedo and to use the interactive processing capabilities of vedo in napari. 
 
+## I/O
+
+The plugin allows to export and import meshes and point layers. The following are supported:
+
+| napari layer type | File Format | Import | Export | Features |
+|:------------------:|:-----------:|:------:|:------:|:--------:|
+| Surface | .vtp | ✓ | ✓ |  ✓ |
+| Surface | .obj | ✓ | ✓ |  ✗ |
+| Surface | .stl | ✓ | ✓ |  ✗ |
+| Surface | .ply | ✓ | ✓ |  ✗ |
+| Points | .vtp | ✓ | ✓ |  ✓ |
+
 ## Interactive mesh cutting
 To interactively cut meshes in the napari-vedo MeshCutter, install the plugin (see below) and open the plugin it from the napari plugins menu (`Plugins > Mesh Cutter (napari-vedo-bridge)`). 
 

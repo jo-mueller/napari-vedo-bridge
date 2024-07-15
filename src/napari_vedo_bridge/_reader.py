@@ -2,7 +2,9 @@ from typing import Union, Sequence, Callable, List, Optional
 PathLike = str
 PathOrPaths = Union[PathLike, Sequence[PathLike]]
 from napari.layers import Layer
+import numpy as np
 #ReaderFunction = Callable[[PathOrPaths], List[LayerData]]
+
 
 def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     import os
@@ -72,13 +74,16 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
     # color the pointcloud by the first detected feature
     if not properties['features'].empty:
         properties['face_color'] = properties['features'].columns[0]
-    
+
     return [(data, properties, 'points')]
+
 
 def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
     import os
     import tqdm
+    import pkg_resources
     from napari_timelapse_processor import TimelapseConverter
+    import napari
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
@@ -92,10 +97,6 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
     if len(path) == 1:
         layer = _read_single_surface(path[0])
         data = layer.data
-        properties = {
-            'features': layer.features,
-            'size': 0.5
-        }
 
     else:
         # read all the files, create a layer from each
@@ -105,17 +106,16 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
 
         # Stack output layer and return
         Converter = TimelapseConverter()
-        layer_4d = Converter.stack_data(layers, layertype=Layer)
-        data = layer_4d.data
-        properties = {
-            'features': layer_4d.features,
-            'size': 0.5
-        }
+        layer = Converter.stack_data(layers, layertype=Layer)
+        data = layer.data
 
-    # color the pointcloud by the first detected feature
-    if not properties['features'].empty:
-        properties['face_color'] = properties['features'].columns[0]
-    
+    # check if napari version is 0.4.11 or higher
+
+    properties = {}
+
+    if pkg_resources.parse_version(napari.__version__) >= pkg_resources.parse_version('0.5.0'):
+        properties['features'] = layer.features
+
     return [(data, properties, 'surface')]
 
 
@@ -125,15 +125,17 @@ def _read_single_points(path) -> Layer:
     """
     import vedo
     import pandas as pd
+    from napari.layers import Layer
     points = vedo.load(path)
 
-    layer = (
+    layer = Layer.create(
             points.vertices,
             {'features': pd.DataFrame(dict(points.pointdata))},
             'points'
         )
-    
+
     return layer
+
 
 def _read_single_surface(path):
     """
@@ -141,13 +143,14 @@ def _read_single_surface(path):
     """
     import vedo
     import pandas as pd
+    from napari.layers import Layer
     surface = vedo.load(path)
 
-    layer = (
-            surface.points(),
+    layer = Layer.create(
+            (surface.vertices, np.asarray(surface.cells, dtype=int)),
             {},
             'surface'
         )
     layer.features = pd.DataFrame(dict(surface.pointdata))
-    
+
     return layer

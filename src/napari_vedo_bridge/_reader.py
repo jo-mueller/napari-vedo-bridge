@@ -11,17 +11,17 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     # in case a single file is passed
     if isinstance(path, str) and path.endswith('.vtp'):
         thing = vedo.load(path)
-        if isinstance(thing, vedo.Points):
+        if type(thing) is vedo.Points:
             return points_reader
-        elif isinstance(thing, vedo.Mesh):
+        elif type(thing) is vedo.Mesh:
             return surfaces_reader
 
     # in case a list of files is passed
     elif isinstance(path, list) and all([p.endswith('.vtp') for p in path]):
         thing = vedo.load(path[0])
-        if isinstance(thing, vedo.Points):
+        if type(thing) is vedo.Points:
             return points_reader
-        elif isinstance(thing, vedo.Mesh):
+        elif type(thing) is vedo.Mesh:
             return surfaces_reader
 
     # in case a directory is passed

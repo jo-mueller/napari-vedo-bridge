@@ -3,7 +3,9 @@ PathLike = str
 PathOrPaths = Union[PathLike, Sequence[PathLike]]
 from napari.layers import Layer
 import numpy as np
-#ReaderFunction = Callable[[PathOrPaths], List[LayerData]]
+
+
+_supported_extensions = ['vtp', 'ply', 'obj', 'vtk', 'stl']
 
 
 def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
@@ -11,20 +13,30 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     import vedo
 
     # in case a single file is passed
-    if isinstance(path, str) and path.endswith('.vtp'):
+    if isinstance(path, str) and path.split('.')[-1] in _supported_extensions:
         thing = vedo.load(path)
         if type(thing) is vedo.Points:
             return points_reader
         elif type(thing) is vedo.Mesh:
-            return surfaces_reader
+
+            # if it's a mesh with no edges, it's probably a points layer
+            if len(thing.cells) == 0:
+                return points_reader
+            else:
+                return surfaces_reader
 
     # in case a list of files is passed
-    elif isinstance(path, list) and all([p.endswith('.vtp') for p in path]):
+    elif isinstance(path, list) and all([p.split('.')[-1] in _supported_extensions for p in path]):
         thing = vedo.load(path[0])
         if type(thing) is vedo.Points:
             return points_reader
         elif type(thing) is vedo.Mesh:
-            return surfaces_reader
+
+            # if it's a mesh with no edges, it's probably a points layer
+            if len(thing.cells) == 0:
+                return points_reader
+            else:
+                return surfaces_reader
 
     # in case a directory is passed
     # find all files inside and pass again as list
@@ -34,6 +46,7 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
 
     return None
 
+
 def points_reader(path: PathOrPaths) -> List["LayerData"]:
     import os
     import tqdm
@@ -41,7 +54,7 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
-        path = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.vtp')]
+        path = [os.path.join(path, f) for f in os.listdir(path) if f.split('.')[-1] in _supported_extensions]
     elif isinstance(path, list):
         pass
     elif isinstance(path, str):
@@ -87,7 +100,7 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
-        path = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.vtp')]
+        path = [os.path.join(path, f) for f in os.listdir(path) if f.split('.')[-1] in _supported_extensions]
     elif isinstance(path, list):
         pass
     elif isinstance(path, str):

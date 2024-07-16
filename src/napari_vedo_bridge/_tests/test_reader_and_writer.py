@@ -32,6 +32,9 @@ def test_writer_reader_mesh_4d(create_4d_mesh, formats):
     assert reader is not None
 
     layers = reader(Path(output_paths[0]).parent)
+
+    print(layers[0][0][0])
+    print(layer_input.data[0])
     assert len(layers) == 1
     assert np.array_equal(layers[0][0][0], layer_input.data[0])
     assert np.array_equal(layers[0][0][1], layer_input.data[1])

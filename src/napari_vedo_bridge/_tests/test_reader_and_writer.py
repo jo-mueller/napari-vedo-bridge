@@ -6,8 +6,8 @@ def create_4d_mesh():
     import numpy as np
     from napari_timelapse_processor import TimelapseConverter
 
-    spheres = [vedo.IcoSphere(pos=(i, i, i), r=10) for i in range(10)]
-    spheres_tuples = [(s.vertices, np.asarray(s.cells, dtype=int)) for s in spheres]
+    spheres = [vedo.IcoSphere(pos=(i, i, i), r=10).clean() for i in range(10)]
+    spheres_tuples = [(np.round(s.vertices, 3), np.asarray(s.cells, dtype=int)) for s in spheres]
 
     Converter = TimelapseConverter()
     return Converter.stack_data(spheres_tuples, layertype='napari.types.SurfaceData')
@@ -20,7 +20,7 @@ def create_4d_points():
     from napari.layers import Points
     import pandas as pd
 
-    spheres = [vedo.Sphere(pos=(i, i, i), r=10).vertices for i in range(10)]
+    spheres = [np.round(vedo.Sphere(pos=(i, i, i), r=10).clean().vertices, 3) for i in range(10)]
 
     Converter = TimelapseConverter()
     points_4d = Converter.stack_data(spheres, layertype='napari.types.PointsData')

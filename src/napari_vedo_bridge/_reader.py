@@ -10,6 +10,7 @@ _supported_extensions = ['vtp', 'ply', 'obj', 'vtk', 'stl']
 
 def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     import os
+    from pathlib import Path
     import vedo
 
     # in case a single file is passed
@@ -29,7 +30,7 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     elif isinstance(path, list) and all([p.split('.')[-1] in _supported_extensions for p in path]):
 
         # ensure correct order of files(files are xxx.format.0, xxx.format.1, etc)
-        path = sorted(path, key=lambda x: int(x.split('.')[0]))
+        path = sorted(path, key=lambda x: int(Path(x).stem))
 
         thing = vedo.load(path[0])
         if type(thing) is vedo.Points:

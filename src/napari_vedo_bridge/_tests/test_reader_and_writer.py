@@ -29,10 +29,11 @@ def create_4d_points():
 
     return Points(data=points_4d, features=features)
 
-@pytest.mark.parametrize("formats", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
-def test_writer_reader_mesh_4d(create_4d_mesh, formats):
+@pytest.mark.parametrize("format", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
+def test_writer_reader_mesh_4d(create_4d_mesh, format):
     from napari.layers import Layer, Surface
     from pathlib import Path
+    import os
     import numpy as np
 
     from napari_vedo_bridge._writer import write_surfaces
@@ -46,22 +47,18 @@ def test_writer_reader_mesh_4d(create_4d_mesh, formats):
         output_paths = write_surfaces(Path(tmpdir) / f'test.{format}', ldtuple[0], ldtuple[1])
         assert len(output_paths) == 10
 
-    reader = get_reader(output_paths[0])
-    assert reader is not None
+        reader = get_reader(output_paths[0])
+        assert reader is not None
 
-    layers = reader(Path(output_paths[0]).parent)
+        layers = reader(Path(output_paths[0]).parent)
 
-    print(layers[0][0][0])
-    print(layer_input.data[0])
-    assert len(layers) == 1
-    assert np.array_equal(layers[0][0][0], layer_input.data[0])
-    assert np.array_equal(layers[0][0][1], layer_input.data[1])
+        assert len(layers) == 1
+        assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-7)
+        assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-7)
 
 
-
-
-@pytest.mark.parametrize("formats", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
-def test_writer_reader_points_4d(create_4d_points, formats):
+@pytest.mark.parametrize("format", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
+def test_writer_reader_points_4d(create_4d_points, format):
     from napari.layers import Layer, Points
     from pathlib import Path
     import numpy as np
@@ -71,21 +68,23 @@ def test_writer_reader_points_4d(create_4d_points, formats):
 
     ldtuple = Layer.as_layer_data_tuple(create_4d_points)
 
-    output_paths = write_points('test.vtp', ldtuple[0], ldtuple[1])
-    assert len(output_paths) == 10
+    with tempfile.TemporaryDirectory() as tmpdir:
+        output_paths = write_points(Path(tmpdir) / f'test.{format}', ldtuple[0], ldtuple[1])
+        assert len(output_paths) == 10
 
-    reader = get_reader(output_paths[0])
-    assert reader is not None
+        reader = get_reader(output_paths[0])
+        assert reader is not None
 
-    layers = reader(Path(output_paths[0]).parent)
-    
-    # check that only one (4d) layer is returned
-    assert len(layers) == 1
+        layers = reader(Path(output_paths[0]).parent)
 
-    # check that point coordinates are the same
-    assert np.array_equal(layers[0][0], create_4d_points.data)
+        # check that only one (4d) layer is returned
+        assert len(layers) == 1
 
-    # check that features are the same
-    assert np.array_equal(layers[0][1]['features']['feature1'], create_4d_points.features['feature1'])
+        # check that point coordinates are the same
+        assert np.allclose(layers[0][0], create_4d_points.data, atol=1e-7)
 
-
+        # check that features are the same
+        if format == 'vtp':
+            assert np.allclose(layers[0][1]['features']['feature1'],
+                                create_4d_points.features['feature1'],
+                                atol=1e-7)

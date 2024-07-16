@@ -38,3 +38,11 @@ def test_writer_reader_mesh_4d(create_4d_mesh, formats):
     assert len(layers) == 1
     assert np.array_equal(layers[0][0][0], layer_input.data[0])
     assert np.array_equal(layers[0][0][1], layer_input.data[1])
+
+    # clean up
+    for p in output_paths:
+        Path(p).unlink()
+
+    # remove directory if it exists
+    if Path('test').exists():
+        Path('test').rmdir()

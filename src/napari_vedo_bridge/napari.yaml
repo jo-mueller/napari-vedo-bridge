@@ -45,4 +45,12 @@ contributions:
       filename_patterns:
       - '*.vtp'
       accepts_directories: true
+    - command: napari-vedo-bridge.load_surfaces
+      filename_patterns:
+      - '*.vtp'
+      - '*.vtk'
+      - '*.obj'
+      - '*.stl'
+      - '*.ply'
+      accepts_directories: true
 

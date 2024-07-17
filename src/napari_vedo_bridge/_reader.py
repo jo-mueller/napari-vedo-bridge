@@ -14,6 +14,9 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
     from pathlib import Path
     import vedo
 
+    if isinstance(path, Path): # convert to string
+        path = str(path)
+
     # in case a single file is passed
     if isinstance(path, str) and path.split('.')[-1] in _supported_extensions:
         thing = vedo.load(path)
@@ -32,9 +35,6 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
         p.split('.')[-1] in _supported_extensions for p in path
     ):
 
-        # ensure correct order of files(files are xxx.format.0, etc)
-        path = sorted(path, key=lambda x: int(Path(x).stem))
-
         thing = vedo.load(path[0])
         if type(thing) is vedo.Points:
             return points_reader
@@ -48,7 +48,7 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
 
     # in case a directory is passed
     # find all files inside and pass again as list
-    elif isinstance(path, str) and os.path.isdir(path):
+    elif isinstance(path, (str, Path)) and os.path.isdir(path):
         filenames = [os.path.join(path, f) for f in os.listdir(path)] 
         return get_reader(filenames)
 
@@ -57,6 +57,7 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
 
 def points_reader(path: PathOrPaths) -> List["LayerData"]:
     import os
+    from pathlib import Path
     import tqdm
     from napari_timelapse_processor import TimelapseConverter
 
@@ -66,10 +67,11 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
             os.path.join(path, f)
             for f in os.listdir(path)
             if f.split('.')[-1] in _supported_extensions]
+        path = sorted(path, key=lambda x: int(Path(x).stem))
     elif isinstance(path, list):
-        pass
-    elif isinstance(path, str):
-        path = [path]
+        path = sorted(path, key=lambda x: int(Path(x).stem))
+    elif isinstance(path, (str, Path)):
+        path = [str(path)]
 
     layers = []
     if len(path) == 1:
@@ -104,6 +106,7 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
 
 def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
     import os
+    from pathlib import Path
     import tqdm
     import pkg_resources
     from napari_timelapse_processor import TimelapseConverter
@@ -116,9 +119,11 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
             for f in os.listdir(path)
             if f.split('.')[-1] in _supported_extensions
             ]
+        
+        path = sorted(path, key=lambda x: int(Path(x).stem))
     elif isinstance(path, list):
-        pass
-    elif isinstance(path, str):
+        path = sorted(path, key=lambda x: int(Path(x).stem))
+    elif isinstance(path, (str, Path)):
         path = [path]
 
     layers = []
@@ -155,7 +160,7 @@ def _read_single_points(path) -> Layer:
     import vedo
     import pandas as pd
     from napari.layers import Layer
-    points = vedo.load(path)
+    points = vedo.load(str(path))
 
     # This is done, because vedo adds an RGB (Nx3) feature
     # to the pointdata for some formats

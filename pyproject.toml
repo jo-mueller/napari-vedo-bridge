@@ -1,17 +1,80 @@
+[project]
+name = "napari-vedo-bridge"
+dynamic = ["version"]
+description = "Transfer mesh data between napari and vedo for interactive processing"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Johannes Soltwedel"},
+  {email = "johannes_richard.soltwedel@tu-dresden.de"},
+  {name = "Marco Musy"}
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "magicgui",
+    "qtpy",
+    "vedo>=2024.5.0",
+    "napari-timelapse-processor",
+    "napari"
+]
+
+[project.optional-dependencies]
+testing = [
+    "tox",
+    "pytest",  # https://docs.pytest.org/en/latest/contents.html
+    "pytest-cov",  # https://pytest-cov.readthedocs.io/en/latest/
+    "pytest-qt",  # https://pytest-qt.readthedocs.io/en/latest/
+    "napari",
+    "pyqt5",
+]
+
+[project.entry-points."napari.manifest"]
+"napari-vedo-bridge" = "napari_vedo_bridge:napari.yaml"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/jo-mueller/napari-vedo-bridge/issues"
+"Documentation" = "https://github.com/jo-mueller/napari-vedo-bridge#README.md"
+"Source Code" = "https://github.com/jo-mueller/napari-vedo-bridge"
+"User Support" = "https://github.com/jo-mueller/napari-vedo-bridge/issues"
+
 [build-system]
 requires = ["setuptools>=42.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
+
+[tool.setuptools.dynamic]
+version = {attr = "napari_vedo_bridge.__version__"}
 
 [tool.black]
 line-length = 79
 target-version = ['py38', 'py39', 'py310']
 
-
 [tool.ruff]
 line-length = 79
-select = [
+lint.select = [
     "E", "F", "W", #flake8
     "UP", # pyupgrade
     "I", # isort
@@ -24,10 +87,10 @@ select = [
     "PIE", # flake8-pie
     "SIM", # flake8-simplify
 ]
-ignore = [
+lint.ignore = [
     "E501", # line too long. let black handle this
     "UP006", "UP007", # type annotation. As using magicgui require runtime type annotation then we disable this.
-    "SIM117", # flake8-simplify - some of merged with statements are not looking great with black, reanble after drop python 3.9
+    "SIM117", # flake8-simplify - some of merged with statements are not looking great with black, re-enable after drop python 3.9
 ]
 
 exclude = [

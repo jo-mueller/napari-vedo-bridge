@@ -30,8 +30,8 @@ def write_points(
 
         for key in dict(list_of_layers[0].features).keys():
             points.pointdata[key] = list_of_layers[0].features[key]
-        vedo.write(points, path)
-        return [path]
+        vedo.write(points, str(path))
+        return [str(path)]
 
     # if there are multiple timepoints, write each one separately
     else:
@@ -45,7 +45,7 @@ def write_points(
             output_path = str(Path(path).parent / Path(path).stem / "{:03d}.{:s}".format(i, format))
             output_paths.append(output_path)
 
-            vedo.write(points, output_path)
+            vedo.write(points, str(output_path))
 
         return output_paths
 
@@ -61,7 +61,7 @@ def write_surfaces(
     import tqdm
     import pandas as pd
 
-    format = Path(path).suffix[1:]
+    file_format = Path(path).suffix[1:]
 
     layer = Layer.create(layer_data, attributes, 'surface')
     if not hasattr(layer, 'features'):
@@ -76,11 +76,14 @@ def write_surfaces(
 
     # if there is only one timepoint, just write it
     if len(list_of_layers) == 1:
-        mesh = vedo.Mesh(list_of_layers[0].data)
+        mesh = vedo.Mesh((
+            list_of_layers[0].data[0],
+            list_of_layers[0].data[1].astype(int)
+            ))
         for key in dict(list_of_layers[0].features).keys():
             mesh.pointdata[key] = list_of_layers[0].features[key]
-        vedo.write(mesh, path)
-        return [path]
+        vedo.write(mesh, str(path))
+        return [str(path)]
 
     # if there are multiple timepoints, write each one separately
     else:
@@ -91,9 +94,9 @@ def write_surfaces(
             for key in dict(list_of_layers[0].features).keys():
                 mesh.pointdata[key] = list_of_layers[i].features[key]
 
-            output_path = str(Path(path).parent / Path(path).stem / "{:03d}.{:s}".format(i, format))
+            output_path = str(Path(path).parent / Path(path).stem / "{:03d}.{:s}".format(i, file_format))
             output_paths.append(output_path)
 
-            vedo.write(mesh, output_path)
+            vedo.write(mesh, str(output_path))
 
         return output_paths

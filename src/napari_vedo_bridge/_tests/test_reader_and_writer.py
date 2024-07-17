@@ -82,7 +82,7 @@ def test_writer_reader_mesh_4d(create_4d_mesh, file_format):
             )
         assert len(output_paths) == 10
 
-        reader = get_reader(output_paths[0])
+        reader = get_reader(Path(output_paths[0]).parent)
         assert reader is not None
 
         layers = reader(Path(output_paths[0]).parent)
@@ -119,7 +119,7 @@ def test_writer_reader_mesh_3d(create_3d_mesh, file_format):
         reader = get_reader(output_paths[0])
         assert reader is not None
 
-        layers = reader(Path(output_paths[0]).parent)
+        layers = reader(output_paths[0])
 
         assert len(layers) == 1
         assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-7)
@@ -184,7 +184,7 @@ def test_writer_reader_points_3d(create_3d_points, file_format):
         reader = get_reader(output_paths[0])
         assert reader is not None
 
-        layers = reader(Path(output_paths[0]).parent)
+        layers = reader(output_paths[0])
 
         # check that only one (3d) layer is returned
         assert len(layers) == 1

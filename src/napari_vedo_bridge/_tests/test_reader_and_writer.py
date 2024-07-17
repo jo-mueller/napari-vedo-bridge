@@ -87,9 +87,13 @@ def test_writer_reader_mesh_4d(create_4d_mesh, file_format):
 
         layers = reader(Path(output_paths[0]).parent)
 
+        print(layers[0][0][0])
+
+        print(layer_input.data[0])
+
         assert len(layers) == 1
-        assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-3)
-        assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-3)
+        assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-7)
+        assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-7)
 
 
 @pytest.mark.parametrize("file_format", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
@@ -118,8 +122,8 @@ def test_writer_reader_mesh_3d(create_3d_mesh, file_format):
         layers = reader(Path(output_paths[0]).parent)
 
         assert len(layers) == 1
-        assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-3)
-        assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-3)
+        assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-7)
+        assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-7)
 
 
 @pytest.mark.parametrize("file_format", ['vtp', 'vtk', 'obj', 'ply'])
@@ -149,7 +153,7 @@ def test_writer_reader_points_4d(create_4d_points, file_format):
         assert len(layers) == 1
 
         # check that point coordinates are the same
-        assert np.allclose(layers[0][0], layer_input.data, atol=1e-3)
+        assert np.allclose(layers[0][0], layer_input.data, atol=1e-7)
 
         # check that features are the same
         if file_format == 'vtp':
@@ -186,4 +190,4 @@ def test_writer_reader_points_3d(create_3d_points, file_format):
         assert len(layers) == 1
 
         # check that point coordinates are the same
-        assert np.allclose(layers[0][0], layer_input.data, atol=1e-3)
+        assert np.allclose(layers[0][0], layer_input.data, atol=1e-7)

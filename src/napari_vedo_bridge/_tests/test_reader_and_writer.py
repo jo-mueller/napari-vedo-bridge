@@ -52,8 +52,6 @@ def create_4d_points():
     return Points(data=points_4d, features=features)
 
 
-@pytest.mark.parametrize("format", ['vtp', 'vtk', 'obj', 'stl', 'ply'])
-def test_writer_reader_mesh_4d(create_4d_mesh, format):
 @pytest.fixture
 def create_3d_points():
     import vedo
@@ -77,10 +75,10 @@ def test_writer_reader_mesh_4d(create_4d_mesh, file_format):
     layer_input.features = None
     ldtuple = Layer.as_layer_data_tuple(layer_input)
 
-    with tempfile.TemporaryDirectory(suffix=format) as tmpdir:
+    with tempfile.TemporaryDirectory(suffix=file_format) as tmpdir:
 
         output_paths = write_surfaces(
-            Path(tmpdir) / f'test.{format}', ldtuple[0], ldtuple[1]
+            str(Path(tmpdir) / f'test.{file_format}'), ldtuple[0], ldtuple[1]
             )
         assert len(output_paths) == 10
 
@@ -122,6 +120,10 @@ def test_writer_reader_mesh_3d(create_3d_mesh, file_format):
         assert len(layers) == 1
         assert np.allclose(layers[0][0][0], layer_input.data[0], atol=1e-7)
         assert np.allclose(layers[0][0][1], layer_input.data[1], atol=1e-7)
+
+
+@pytest.mark.parametrize("file_format", ['vtp', 'vtk', 'obj', 'ply'])
+def test_writer_reader_points_4d(create_4d_points, file_format):
     from napari.layers import Layer
     from pathlib import Path
     import numpy as np
@@ -132,10 +134,10 @@ def test_writer_reader_mesh_3d(create_3d_mesh, file_format):
     layer_input = create_4d_points
     ldtuple = Layer.as_layer_data_tuple(layer_input)
 
-    with tempfile.TemporaryDirectory(suffix=format) as tmpdir:
+    with tempfile.TemporaryDirectory(suffix=file_format) as tmpdir:
 
         output_paths = write_points(
-            Path(tmpdir) / f'test.{format}', ldtuple[0], ldtuple[1])
+            str(Path(tmpdir) / f'test.{file_format}'), ldtuple[0], ldtuple[1])
         assert len(output_paths) == 10
 
         reader = get_reader(output_paths[0])
@@ -150,7 +152,7 @@ def test_writer_reader_mesh_3d(create_3d_mesh, file_format):
         assert np.allclose(layers[0][0], layer_input.data, atol=1e-7)
 
         # check that features are the same
-        if format == 'vtp':
+        if file_format == 'vtp':
             assert np.allclose(
                 layers[0][1]['features']['feature1'],
                 layer_input.features['feature1'],

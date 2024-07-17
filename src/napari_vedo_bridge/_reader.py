@@ -1,8 +1,9 @@
-from typing import Union, Sequence, Callable, List, Optional
+import numpy as np
+from napari.layers import Layer
+from typing import Union, Sequence, List, Optional
+
 PathLike = str
 PathOrPaths = Union[PathLike, Sequence[PathLike]]
-from napari.layers import Layer
-import numpy as np
 
 
 _supported_extensions = ['vtp', 'ply', 'obj', 'vtk', 'stl']
@@ -27,9 +28,11 @@ def get_reader(path: "PathOrPaths") -> Optional["ReaderFunction"]:
                 return surfaces_reader
 
     # in case a list of files is passed
-    elif isinstance(path, list) and all([p.split('.')[-1] in _supported_extensions for p in path]):
+    elif isinstance(path, list) and all(
+        p.split('.')[-1] in _supported_extensions for p in path
+    ):
 
-        # ensure correct order of files(files are xxx.format.0, xxx.format.1, etc)
+        # ensure correct order of files(files are xxx.format.0, etc)
         path = sorted(path, key=lambda x: int(Path(x).stem))
 
         thing = vedo.load(path[0])
@@ -59,7 +62,10 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
-        path = [os.path.join(path, f) for f in os.listdir(path) if f.split('.')[-1] in _supported_extensions]
+        path = [
+            os.path.join(path, f)
+            for f in os.listdir(path)
+            if f.split('.')[-1] in _supported_extensions]
     elif isinstance(path, list):
         pass
     elif isinstance(path, str):
@@ -105,7 +111,11 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
-        path = [os.path.join(path, f) for f in os.listdir(path) if f.split('.')[-1] in _supported_extensions]
+        path = [
+            os.path.join(path, f)
+            for f in os.listdir(path)
+            if f.split('.')[-1] in _supported_extensions
+            ]
     elif isinstance(path, list):
         pass
     elif isinstance(path, str):
@@ -127,11 +137,12 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
         layer = Converter.stack_data(layers, layertype=Layer)
         data = layer.data
 
-    # check if napari version is 0.4.11 or higher
+    # check if napari version is 0.5.0 or higher
+    # surface_layer.features only available in 0.5.0 or higher
 
     properties = {}
-
-    if pkg_resources.parse_version(napari.__version__) >= pkg_resources.parse_version('0.5.0'):
+    if pkg_resources.parse_version(napari.__version__) >= \
+            pkg_resources.parse_version('0.5.0'):
         properties['features'] = layer.features
 
     return [(data, properties, 'surface')]
@@ -146,9 +157,17 @@ def _read_single_points(path) -> Layer:
     from napari.layers import Layer
     points = vedo.load(path)
 
+    # This is done, because vedo adds an RGB (Nx3) feature
+    # to the pointdata for some formats
+    features = {
+        key: np.asarray(points.pointdata[key])
+        for key in points.pointdata.keys()
+        if len(points.pointdata[key].shape) == 1
+        }
+
     layer = Layer.create(
             points.vertices,
-            {'features': pd.DataFrame(dict(points.pointdata))},
+            {'features': pd.DataFrame(features)},
             'points'
         )
 

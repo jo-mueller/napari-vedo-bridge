@@ -20,6 +20,67 @@ contributions:
       python_name: napari_vedo_bridge._reader:get_reader
       title: Load surfaces from disk
 
+    - id: napari-vedo-bridge.compute_normals
+      python_name: napari_vedo_bridge._mesh:compute_normals
+      title: Compute normals for the given mesh
+    - id: napari-vedo-bridge.shrink
+      python_name: napari_vedo_bridge._mesh:shrink
+      title: Shrink the given mesh
+    - id: napari-vedo-bridge.join
+      python_name: napari_vedo_bridge._mesh:join
+      title: Join the given meshes
+    - id: napari-vedo-bridge.subdivide
+      python_name: napari_vedo_bridge._mesh:subdivide
+      title: Subdivide the given mesh
+    - id: napari-vedo-bridge.decimate
+      python_name: napari_vedo_bridge._mesh:decimate
+      title: Decimate the given mesh
+    - id: napari-vedo-bridge.decimate_pro
+      python_name: napari_vedo_bridge._mesh:decimate_pro
+      title: Decimate the given mesh using the Pro algorithm
+    - id: napari-vedo-bridge.decimate_binned
+      python_name: napari_vedo_bridge._mesh:decimate_binned
+      title: Decimate the given mesh using the Binned algorithm
+    - id: napari-vedo-bridge.smooth
+      python_name: napari_vedo_bridge._mesh:smooth
+      title: Smooth the given mesh
+    - id: napari-vedo-bridge.fill_holes
+      python_name: napari_vedo_bridge._mesh:fill_holes
+      title: Fill holes in the given mesh
+    - id: napari-vedo-bridge.inside_points
+      python_name: napari_vedo_bridge._mesh:inside_points
+      title: Get the points inside the given mesh
+    - id: napari-vedo-bridge.extrude
+      python_name: napari_vedo_bridge._mesh:extrude
+      title: Extrude the given mesh
+    - id: napari-vedo-bridge.split
+      python_name: napari_vedo_bridge._mesh:split
+      title: Split the given mesh into connected components
+    - id: napari-vedo-bridge.extract_largest_region
+      python_name: napari_vedo_bridge._mesh:extract_largest_region
+      title: Extract the largest region from the given mesh
+    - id: napari-vedo-bridge.binarize
+      python_name: napari_vedo_bridge._mesh:binarize
+      title: Binarize the given mesh
+    - id: napari-vedo-bridge.smooth_points
+      python_name: napari_vedo_bridge._points:smooth_points
+      title: Smooth the given points
+    - id: napari-vedo-bridge.decimate_points
+      python_name: napari_vedo_bridge._points:decimate_points
+      title: Decimate the given points
+    - id: napari-vedo-bridge.cluster_points
+      python_name: napari_vedo_bridge._points:cluster_points
+      title: Cluster the given points
+    - id: napari-vedo-bridge.remove_outliers
+      python_name: napari_vedo_bridge._points:remove_outliers
+      title: Remove outliers from the given points
+    - id: napari-vedo-bridge.compute_normals_points
+      python_name: napari_vedo_bridge._points:compute_normals
+      title: Compute normals for the given points
+    - id: napari-vedo-bridge.extract_largest_cluster
+      python_name: napari_vedo_bridge._points:extract_largest_cluster
+      title: Extract the largest cluster from the given points
+
   widgets:
     - command: napari-vedo-bridge.cutter_widget
       display_name: Mesh cutter
@@ -53,4 +114,3 @@ contributions:
       - '*.stl'
       - '*.ply'
       accepts_directories: true
-

@@ -22,128 +22,128 @@ contributions:
 
     - id: napari-vedo-bridge.compute_normals
       python_name: napari_vedo_bridge._mesh:compute_normals
-      title: Compute normals for the given mesh
+      title: Compute normals
     - id: napari-vedo-bridge.shrink
       python_name: napari_vedo_bridge._mesh:shrink
-      title: Shrink the given mesh
+      title: Shrink mesh
     - id: napari-vedo-bridge.join
       python_name: napari_vedo_bridge._mesh:join
-      title: Join the given meshes
+      title: Join meshes
     - id: napari-vedo-bridge.subdivide
       python_name: napari_vedo_bridge._mesh:subdivide
-      title: Subdivide the given mesh
+      title: Subdivide mesh
     - id: napari-vedo-bridge.decimate
       python_name: napari_vedo_bridge._mesh:decimate
-      title: Decimate the given mesh
+      title: Decimate mesh
     - id: napari-vedo-bridge.decimate_pro
       python_name: napari_vedo_bridge._mesh:decimate_pro
-      title: Decimate the given mesh using the Pro algorithm
+      title: Decimate mesh (Pro algorithm)
     - id: napari-vedo-bridge.decimate_binned
       python_name: napari_vedo_bridge._mesh:decimate_binned
-      title: Decimate the given mesh using the Binned algorithm
+      title: Decimate mesh (Binned algorithm)
     - id: napari-vedo-bridge.smooth
       python_name: napari_vedo_bridge._mesh:smooth
-      title: Smooth the given mesh
+      title: Smooth mesh
     - id: napari-vedo-bridge.fill_holes
       python_name: napari_vedo_bridge._mesh:fill_holes
-      title: Fill holes in the given mesh
+      title: Fill holes
     - id: napari-vedo-bridge.inside_points
       python_name: napari_vedo_bridge._mesh:inside_points
-      title: Get the points inside the given mesh
+      title: Get inside points
     - id: napari-vedo-bridge.extrude
       python_name: napari_vedo_bridge._mesh:extrude
-      title: Extrude the given mesh
+      title: Extrude mesh
     - id: napari-vedo-bridge.split
       python_name: napari_vedo_bridge._mesh:split
-      title: Split the given mesh into connected components
+      title: Split mesh
     - id: napari-vedo-bridge.extract_largest_region
       python_name: napari_vedo_bridge._mesh:extract_largest_region
-      title: Extract the largest region from the given mesh
+      title: Extract largest region
     - id: napari-vedo-bridge.binarize
       python_name: napari_vedo_bridge._mesh:binarize
-      title: Binarize the given mesh
+      title: Binarize mesh
     - id: napari-vedo-bridge.smooth_points
       python_name: napari_vedo_bridge._points:smooth_points
-      title: Smooth the given points
+      title: Smooth points
     - id: napari-vedo-bridge.decimate_points
       python_name: napari_vedo_bridge._points:decimate_points
-      title: Decimate the given points
+      title: Decimate points
     - id: napari-vedo-bridge.cluster_points
       python_name: napari_vedo_bridge._points:cluster_points
-      title: Cluster the given points
+      title: Cluster points
     - id: napari-vedo-bridge.remove_outliers
       python_name: napari_vedo_bridge._points:remove_outliers
-      title: Remove outliers from the given points
+      title: Remove outliers
     - id: napari-vedo-bridge.compute_normals_points
       python_name: napari_vedo_bridge._points:compute_normals
-      title: Compute normals for the given points
+      title: Compute normals
     - id: napari-vedo-bridge.extract_largest_cluster
       python_name: napari_vedo_bridge._points:extract_largest_cluster
-      title: Extract the largest cluster from the given points
+      title: Extract largest cluster
 
   widgets:
     - command: napari-vedo-bridge.cutter_widget
       display_name: Mesh cutter
       autogenerate: true
     - command: napari-vedo-bridge.compute_normals
-      display_name: Compute normals for the given mesh
+      display_name: Compute normals
       autogenerate: true
     - command: napari-vedo-bridge.shrink
-      display_name: Shrink the given mesh
+      display_name: Shrink mesh
       autogenerate: true
     - command: napari-vedo-bridge.join
-      display_name: Join the given meshes
+      display_name: Join meshes
       autogenerate: true
     - command: napari-vedo-bridge.subdivide
-      display_name: Subdivide the given mesh
+      display_name: Subdivide mesh
       autogenerate: true
     - command: napari-vedo-bridge.decimate
-      display_name: Decimate the given mesh
+      display_name: Decimate mesh
       autogenerate: true
     - command: napari-vedo-bridge.decimate_pro
-      display_name: Decimate the given mesh using the Pro algorithm
+      display_name: Decimate mesh (Pro algorithm)
       autogenerate: true
     - command: napari-vedo-bridge.decimate_binned
-      display_name: Decimate the given mesh using the Binned algorithm
+      display_name: Decimate mesh (Binned algorithm)
       autogenerate: true
     - command: napari-vedo-bridge.smooth
-      display_name: Smooth the given mesh
+      display_name: Smooth mesh
       autogenerate: true
     - command: napari-vedo-bridge.fill_holes
-      display_name: Fill holes in the given mesh
+      display_name: Fill holes
       autogenerate: true
     - command: napari-vedo-bridge.inside_points
-      display_name: Get the points inside the given mesh
+      display_name: Get inside points
       autogenerate: true
     - command: napari-vedo-bridge.extrude
-      display_name: Extrude the given mesh
+      display_name: Extrude mesh
       autogenerate: true
     - command: napari-vedo-bridge.split
-      display_name: Split the given mesh into connected components
+      display_name: Split mesh
       autogenerate: true
     - command: napari-vedo-bridge.extract_largest_region
-      display_name: Extract the largest region from the given mesh
+      display_name: Extract largest region
       autogenerate: true
     - command: napari-vedo-bridge.binarize
-      display_name: Binarize the given mesh
+      display_name: Binarize mesh
       autogenerate: true
     - command: napari-vedo-bridge.smooth_points
-      display_name: Smooth the given points
+      display_name: Smooth points
       autogenerate: true
     - command: napari-vedo-bridge.decimate_points
-      display_name: Decimate the given points
+      display_name: Decimate points
       autogenerate: true
     - command: napari-vedo-bridge.cluster_points
-      display_name: Cluster the given points
+      display_name: Cluster points
       autogenerate: true
     - command: napari-vedo-bridge.remove_outliers
-      display_name: Remove outliers from the given points
+      display_name: Remove outliers
       autogenerate: true
     - command: napari-vedo-bridge.compute_normals_points
-      display_name: Compute normals for the given points
+      display_name: Compute normals
       autogenerate: true
     - command: napari-vedo-bridge.extract_largest_cluster
-      display_name: Extract the largest cluster from the given points
+      display_name: Extract largest cluster
       autogenerate: true
 
   writers:

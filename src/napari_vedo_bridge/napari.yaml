@@ -146,6 +146,42 @@ contributions:
       display_name: Extract the largest cluster from the given points
       autogenerate: true
 
+  menus:
+    napari/file/io:
+      - command: napari-vedo-bridge.load_points
+      - command: napari-vedo-bridge.load_surfaces
+      - command: napari-vedo-bridge.write_points
+      - command: napari-vedo-bridge.write_surfaces
+
+    napari/layers/transform:
+      - command: napari-vedo-bridge.cutter_widget
+      - command: napari-vedo-bridge.extrude
+      - command: napari-vedo-bridge.split
+      - command: napari-vedo-bridge.join
+      - command: napari-vedo-bridge.shrink
+      - command: napari-vedo-bridge.subdivide
+      - command: napari-vedo-bridge.compute_normals
+    napari/layers/filter:
+      - command: napari-vedo-bridge.smooth
+      - command: napari-vedo-bridge.fill_holes
+      - command: napari-vedo-bridge.decimate
+      - command: napari-vedo-bridge.decimate_pro
+      - command: napari-vedo-bridge.decimate_binned
+      - command: napari-vedo-bridge.smooth_points
+      - command: napari-vedo-bridge.decimate_points
+      - command: napari-vedo-bridge.cluster_points
+      - command: napari-vedo-bridge.remove_outliers
+      - command: napari-vedo-bridge.compute_normals_points
+      - command: napari-vedo-bridge.extract_largest_cluster
+      - command: napari-vedo-bridge.inside_points
+
+    napari/layers/segment:
+      - command: napari-vedo-bridge.extract_largest_region
+      - command: napari-vedo-bridge.binarize
+
+    napari/layers/filter:
+
+
   writers:
     - command: napari-vedo-bridge.write_points
       layer_types:

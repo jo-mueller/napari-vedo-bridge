@@ -34,4 +34,5 @@ __all__ = [
     "extract_largest_region",
     "binarize",
     "smooth_points",
+    "remove_outliers"
 ]

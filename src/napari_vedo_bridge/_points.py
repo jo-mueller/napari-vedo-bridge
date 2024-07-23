@@ -1,21 +1,22 @@
 import vedo
 import numpy as np
 from napari_vedo_bridge.utils import napari_to_vedo_points, vedo_points_to_napari
+from napari.layers import Points
 
 
 def smooth_points(
-        points: 'napari.types.PointsData',
+        points: Points,
         n_iterations: int = 15,
         pass_band: float = 0.1,
         edge_angle: float = 15,
         feature_angle: float = 60,
-        boundary: bool = False) -> 'napari.types.PointsData':
+        boundary: bool = False) -> Points:
     """
     Smooth the given points.
 
     Parameters
     ----------
-    points : napari.types.PointsData
+    points : Points
         The input points.
     n_iterations : int, optional
         The number of iterations, by default 15.
@@ -30,7 +31,7 @@ def smooth_points(
 
     Returns
     -------
-    napari.types.PointsData
+    Points
         The smoothed points.
     """
     vedo_points = napari_to_vedo_points(points)
@@ -44,15 +45,15 @@ def smooth_points(
 
 
 def remove_outliers(
-        points: 'napari.types.PointsData',
+        points: Points,
         radius: float = 0.1,
-        n_neighbors: int = 5) -> 'napari.types.PointsData':
+        n_neighbors: int = 5) -> Points:
     """
     Remove outliers from the given points.
 
     Parameters
     ----------
-    points : napari.types.PointsData
+    points : Points
         The input points.
     radius : float, optional
         The radius for outlier detection, by default 0.1.
@@ -61,7 +62,7 @@ def remove_outliers(
 
     Returns
     -------
-    napari.types.PointsData
+    Points
         The points with outliers removed.
     """
     vedo_points = napari_to_vedo_points(points)

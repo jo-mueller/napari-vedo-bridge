@@ -1,23 +1,23 @@
 import vedo
 import numpy as np
 from napari_vedo_bridge.utils import napari_to_vedo_mesh, vedo_mesh_to_napari
-
+from napari.layers import Surface, Vectors, Points
 from typing import Tuple, List, Union
 
 
 def compute_normals(
-        mesh: 'napari.types.SurfaceData') -> 'napari.types.VectorsData':
+        mesh: Surface) -> Vectors:
     """
     Compute normals for the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Vectors
         The mesh with computed normals.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -31,21 +31,21 @@ def compute_normals(
 
 
 def shrink(
-        mesh: 'napari.types.SurfaceData',
-        fraction: float = 0.9) -> 'napari.types.SurfaceData':
+        mesh: Surface,
+        fraction: float = 0.9) -> Surface:
     """
     Shrink the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     fraction : float, optional
         The fraction to shrink the mesh, by default 0.9.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The shrunk mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -54,21 +54,21 @@ def shrink(
 
 
 def subdivide(
-        mesh: 'napari.types.SurfaceData',
-        n: int = 1) -> 'napari.types.SurfaceData':
+        mesh: Surface,
+        n: int = 1) -> Surface:
     """
     Subdivide the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     n : int, optional
         The number of subdivisions, by default 1.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The subdivided mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -77,15 +77,15 @@ def subdivide(
 
 
 def decimate(
-        mesh: 'napari.types.SurfaceData',
+        mesh: Surface,
         fraction: float = 0.5,
-        n_vertices: int = 0) -> 'napari.types.SurfaceData':
+        n_vertices: int = 0) -> Surface:
     """
     Decimate the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     fraction : float, optional
         The fraction to decimate the mesh, by default 0.5.
@@ -94,7 +94,7 @@ def decimate(
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The decimated mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -103,15 +103,15 @@ def decimate(
 
 
 def decimate_pro(
-        mesh: 'napari.types.SurfaceData',
+        mesh: Surface,
         fraction: float = 0.5,
-        n_vertices: int = 0) -> 'napari.types.SurfaceData':
+        n_vertices: int = 0) -> Surface:
     """
     Decimate the given mesh using the Pro algorithm.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     fraction : float, optional
         The reduction factor, by default 0.5.
@@ -120,7 +120,7 @@ def decimate_pro(
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The decimated mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -129,21 +129,21 @@ def decimate_pro(
 
 
 def decimate_binned(
-        mesh: 'napari.types.SurfaceData',
-        divisions: Tuple[int, int, int]) -> 'napari.types.SurfaceData':
+        mesh: Surface,
+        divisions: Tuple[int, int, int]) -> Surface:
     """
     Decimate the given mesh using the Binned algorithm.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     divisions : Tuple[int, int, int]
         The number of divisions along the x, y, and z axes.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The decimated mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -152,18 +152,18 @@ def decimate_binned(
 
 
 def smooth(
-        mesh: 'napari.types.SurfaceData',
+        mesh: Surface,
         n_iterations: int = 15,
         pass_band: float = 0.1,
         edge_angle: float = 15,
         feature_angle: float = 60,
-        boundary: bool = False) -> 'napari.types.SurfaceData':
+        boundary: bool = False) -> Surface:
     """
     Smooth the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     n_iterations : int, optional
         The number of iterations, by default 15.
@@ -178,7 +178,7 @@ def smooth(
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The smoothed mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -192,21 +192,21 @@ def smooth(
 
 
 def fill_holes(
-        mesh: 'napari.types.SurfaceData',
-        size: float = 1000) -> 'napari.types.SurfaceData':
+        mesh: Surface,
+        size: float = 1000) -> Surface:
     """
     Fill holes in the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     size : float, optional
         The maximum size of the holes to fill, by default 1000.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The mesh with filled holes.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -215,22 +215,22 @@ def fill_holes(
 
 
 def inside_points(
-        mesh: 'napari.types.SurfaceData',
-        points: 'napari.types.PointsData'
-        ) -> 'napari.types.PointsData':
+        mesh: Surface,
+        points: Points
+        ) -> Points:
     """
     Get the points inside the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
-    points : napari.types.PointsData
+    points : Points
         The input points.
 
     Returns
     -------
-    napari.types.PointsData
+    Points
         The points inside the mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -239,18 +239,18 @@ def inside_points(
     return inside_points.points()
 
 
-def split(mesh: 'napari.types.SurfaceData') -> List['napari.types.LayerDataTuple']:
+def split(mesh: Surface) -> List[Surface]:
     """
     Split the given mesh into connected components.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
 
     Returns
     -------
-    List[napari.types.LayerDataTuple]
+    List[Surface]
         The connected components of the mesh
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -263,19 +263,19 @@ def split(mesh: 'napari.types.SurfaceData') -> List['napari.types.LayerDataTuple
 
 
 def extract_largest_region(
-        mesh: 'napari.types.SurfaceData'
-        ) -> 'napari.types.SurfaceData':
+        mesh: Surface
+        ) -> Surface:
     """
     Extract the largest region from the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The largest region of the mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
@@ -284,15 +284,15 @@ def extract_largest_region(
 
 
 def binarize(
-        mesh: 'napari.types.SurfaceData',
+        mesh: Surface,
         reference_image: Union['napari.types.ImageData', 'napari.types.LabelsData']
-        ) -> 'napari.types.SurfaceData':
+        ) -> Surface:
     """
     Binarize the given mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input mesh.
     reference_image : Union[napari.types.ImageData, napari.types.LabelsData]
         The reference image or labels from which to get the dimensions of the 
@@ -300,7 +300,7 @@ def binarize(
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The binarized mesh.
     """
 

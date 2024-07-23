@@ -1,13 +1,14 @@
 import vedo
 import numpy as np
+from napari.layers import Surface, Points, Vectors
 
-def napari_to_vedo_mesh(mesh: 'napari.types.SurfaceData') -> vedo.Mesh:
+def napari_to_vedo_mesh(mesh: Surface) -> vedo.Mesh:
     """
     Convert a napari mesh to a vedo mesh.
 
     Parameters
     ----------
-    mesh : napari.types.SurfaceData
+    mesh : Surface
         The input napari mesh.
 
     Returns
@@ -15,10 +16,10 @@ def napari_to_vedo_mesh(mesh: 'napari.types.SurfaceData') -> vedo.Mesh:
     vedo.Mesh
         The converted vedo mesh.
     """
-    vertices, faces = mesh
+    vertices, faces = mesh.data
     return vedo.Mesh([vertices, faces])
 
-def vedo_mesh_to_napari(mesh: vedo.Mesh) -> 'napari.types.SurfaceData':
+def vedo_mesh_to_napari(mesh: vedo.Mesh) -> Surface:
     """
     Convert a vedo mesh to a napari mesh.
 
@@ -29,18 +30,18 @@ def vedo_mesh_to_napari(mesh: vedo.Mesh) -> 'napari.types.SurfaceData':
 
     Returns
     -------
-    napari.types.SurfaceData
+    Surface
         The converted napari mesh.
     """
-    return mesh.vertices, np.asarray(mesh.cells, dtype=int)
+    return Surface((mesh.points(), np.asarray(mesh.faces(), dtype=int)))
 
-def napari_to_vedo_points(points: 'napari.types.PointsData') -> vedo.Points:
+def napari_to_vedo_points(points: Points) -> vedo.Points:
     """
     Convert napari points to vedo points.
 
     Parameters
     ----------
-    points : napari.types.PointsData
+    points : Points
         The input napari points.
 
     Returns
@@ -48,9 +49,9 @@ def napari_to_vedo_points(points: 'napari.types.PointsData') -> vedo.Points:
     vedo.Points
         The converted vedo points.
     """
-    return vedo.Points(points)
+    return vedo.Points(points.data)
 
-def vedo_points_to_napari(points: vedo.Points) -> 'napari.types.PointsData':
+def vedo_points_to_napari(points: vedo.Points) -> Points:
     """
     Convert vedo points to napari points.
 
@@ -61,18 +62,18 @@ def vedo_points_to_napari(points: vedo.Points) -> 'napari.types.PointsData':
 
     Returns
     -------
-    napari.types.PointsData
+    Points
         The converted napari points.
     """
-    return points.points()
+    return Points(points.points())
 
-def napari_to_vedo_vectors(vectors: 'napari.types.VectorsData') -> vedo.Line:
+def napari_to_vedo_vectors(vectors: Vectors) -> vedo.Line:
     """
     Convert napari vectors to vedo vectors.
 
     Parameters
     ----------
-    vectors : napari.types.VectorsData
+    vectors : Vectors
         The input napari vectors.
 
     Returns
@@ -80,9 +81,9 @@ def napari_to_vedo_vectors(vectors: 'napari.types.VectorsData') -> vedo.Line:
     vedo.Lines
         The converted vedo vectors.
     """
-    return vedo.Line(vectors[:, 0], vectors[:, 1])
+    return vedo.Line(vectors.data[:, 0], vectors.data[:, 1])
 
-def vedo_vectors_to_napari(vectors: vedo.Lines) -> 'napari.types.VectorsData':
+def vedo_vectors_to_napari(vectors: vedo.Lines) -> Vectors:
     """
     Convert vedo vectors to napari vectors.
 
@@ -93,7 +94,7 @@ def vedo_vectors_to_napari(vectors: vedo.Lines) -> 'napari.types.VectorsData':
 
     Returns
     -------
-    napari.types.VectorsData
+    Vectors
         The converted napari vectors.
     """
-    return np.stack([vectors.points(0), vectors.points(1)], axis=1)
+    return Vectors(np.stack([vectors.points(0), vectors.points(1)], axis=1))

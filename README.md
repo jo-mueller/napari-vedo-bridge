@@ -41,8 +41,35 @@ To send and get data into and from the plugin, you can:
 - Load a mesh from file (click `Load mesh`)
 - Send a mesh to napari (click `Send back to napari`) - this creates a new mesh layer in napari
 
+## Mesh Processing Functions
 
+The plugin also provides a set of mesh processing functions that can be used in napari. These functions are wrapped from the vedo library and provide various mesh processing capabilities. The following functions are available:
 
+- `compute_normals`: Compute normals for the given mesh.
+- `shrink`: Shrink the given mesh.
+- `join`: Join the given meshes.
+- `subdivide`: Subdivide the given mesh.
+- `decimate`: Decimate the given mesh.
+- `decimate_pro`: Decimate the given mesh using the Pro algorithm.
+- `decimate_binned`: Decimate the given mesh using the Binned algorithm.
+- `smooth`: Smooth the given mesh.
+- `fill_holes`: Fill holes in the given mesh.
+- `inside_points`: Get the points inside the given mesh.
+- `extrude`: Extrude the given mesh.
+- `split`: Split the given mesh into connected components.
+- `extract_largest_region`: Extract the largest region from the given mesh.
+- `binarize`: Binarize the given mesh.
+
+## Pointcloud Processing Functions
+
+The plugin also provides a set of pointcloud processing functions that can be used in napari. These functions are wrapped from the vedo library and provide various pointcloud processing capabilities. The following functions are available:
+
+- `smooth_points`: Smooth the given points.
+- `decimate_points`: Decimate the given points.
+- `cluster_points`: Cluster the given points.
+- `remove_outliers`: Remove outliers from the given points.
+- `compute_normals_points`: Compute normals for the given points.
+- `extract_largest_cluster`: Extract the largest cluster from the given points.
 
 ----------------------------------
 
@@ -61,9 +88,6 @@ https://napari.org/stable/plugins/index.html
 You can install `napari-vedo-bridge` via [pip]:
 
     pip install napari-vedo-bridge
-
-
-
 
 ## Contributing
 

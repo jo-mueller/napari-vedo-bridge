@@ -2,8 +2,25 @@ import vedo
 import numpy as np
 from napari_vedo_bridge.utils import napari_to_vedo_points, vedo_points_to_napari
 from napari.layers import Points
+from magicgui import widgets, magic_factory
+from qtpy.QtCore import Qt
 
 
+def _on_init(widget):
+    label_widget = widgets.Label(value='')
+    func_name = widget.label.split(' ')[0]
+    label_widget.value = f'<a href=\"https://vedo.embl.es/docs/vedo/pointcloud.html#Points.{func_name}\">skimage.filters.{func_name}</a>'
+    label_widget.native.setTextFormat(Qt.RichText)
+    label_widget.native.setTextInteractionFlags(Qt.TextBrowserInteraction)
+    label_widget.native.setOpenExternalLinks(True)
+    widget.extend([label_widget])
+
+
+@magic_factory(
+    points={'label': 'Points'},
+    boundary={'label': 'Boundary', 'widget_type': 'CheckBox'},
+    widget_init=_on_init
+)
 def smooth_points(
         points: Points,
         n_iterations: int = 15,
@@ -44,6 +61,12 @@ def smooth_points(
     return vedo_points_to_napari(vedo_points)
 
 
+@magic_factory(
+    points={'label': 'Points'},
+    radius={'label': 'Radius'},
+    n_neighbors={'label': 'Number of Neighbors'},
+    widget_init=_on_init
+)
 def remove_outliers(
         points: Points,
         radius: float = 0.1,

@@ -69,46 +69,32 @@ contributions:
       autogenerate: true
     - command: napari-vedo-bridge.compute_normals
       display_name: Compute normals
-      autogenerate: true
     - command: napari-vedo-bridge.shrink
       display_name: Shrink mesh
-      autogenerate: true
     - command: napari-vedo-bridge.subdivide
       display_name: Subdivide mesh
-      autogenerate: true
     - command: napari-vedo-bridge.decimate
       display_name: Decimate mesh
-      autogenerate: true
     - command: napari-vedo-bridge.decimate_pro
       display_name: Decimate mesh (Pro algorithm)
-      autogenerate: true
     - command: napari-vedo-bridge.decimate_binned
       display_name: Decimate mesh (Binned algorithm)
-      autogenerate: true
     - command: napari-vedo-bridge.smooth
       display_name: Smooth mesh
-      autogenerate: true
     - command: napari-vedo-bridge.fill_holes
       display_name: Fill holes
-      autogenerate: true
     - command: napari-vedo-bridge.inside_points
       display_name: Get inside points
-      autogenerate: true
     - command: napari-vedo-bridge.split
       display_name: Split mesh
-      autogenerate: true
     - command: napari-vedo-bridge.extract_largest_region
       display_name: Extract largest region
-      autogenerate: true
     - command: napari-vedo-bridge.binarize
       display_name: Binarize mesh
-      autogenerate: true
     - command: napari-vedo-bridge.smooth_points
       display_name: Smooth points
-      autogenerate: true
     - command: napari-vedo-bridge.remove_outliers
       display_name: Remove outliers
-      autogenerate: true
 
   menus:
     napari/file/io:

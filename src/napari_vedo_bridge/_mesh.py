@@ -4,7 +4,24 @@ from napari_vedo_bridge.utils import napari_to_vedo_mesh, vedo_mesh_to_napari
 from napari.layers import Surface, Vectors, Points
 from typing import Tuple, List, Union
 
+from magicgui import widgets, magic_factory
+from qtpy.QtCore import Qt
 
+
+def _on_init(widget):
+    label_widget = widgets.Label(value='')
+    func_name = widget.label.split(' ')[0]
+    label_widget.value = f'<a href=\"https://vedo.embl.es/docs/vedo/mesh.html#Mesh.{func_name}\">skimage.filters.{func_name}</a>'
+    label_widget.native.setTextFormat(Qt.RichText)
+    label_widget.native.setTextInteractionFlags(Qt.TextBrowserInteraction)
+    label_widget.native.setOpenExternalLinks(True)
+    widget.extend([label_widget])
+
+
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)
 def compute_normals(
         mesh: Surface) -> Vectors:
     """
@@ -30,6 +47,11 @@ def compute_normals(
     return napari_vectors
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    fraction={'label': 'Fraction', 'widget_type': 'FloatSlider', 'min': 0.1, 'max': 1.0, 'step': 0.1},
+    widget_init=_on_init
+)
 def shrink(
         mesh: Surface,
         fraction: float = 0.9) -> Surface:
@@ -53,9 +75,13 @@ def shrink(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)
 def subdivide(
         mesh: Surface,
-        n: int = 1) -> Surface:
+        n_iterations: int = 1) -> Surface:
     """
     Subdivide the given mesh.
 
@@ -63,7 +89,7 @@ def subdivide(
     ----------
     mesh : Surface
         The input mesh.
-    n : int, optional
+    n_iterations : int, optional
         The number of subdivisions, by default 1.
 
     Returns
@@ -72,10 +98,16 @@ def subdivide(
         The subdivided mesh.
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
-    vedo_mesh.subdivide(n=n)
+    vedo_mesh.subdivide(n=n_iterations)
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    fraction={'label': 'Fraction', 'widget_type': 'FloatSlider', 'min': 0.1, 'max': 1.0, 'step': 0.01},
+    n_vertices={'label': 'Number of Vertices', 'widget_type': 'IntSlider', 'min': 0, 'max': 100000, 'step': 100},
+    widget_init=_on_init
+)
 def decimate(
         mesh: Surface,
         fraction: float = 0.5,
@@ -102,6 +134,11 @@ def decimate(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    divisions={'label': 'Divisions', 'widget_type': 'TupleSlider', 'min': 1, 'max': 100, 'step': 1},
+    widget_init=_on_init
+)
 def decimate_pro(
         mesh: Surface,
         fraction: float = 0.5,
@@ -128,6 +165,11 @@ def decimate_pro(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    divisions={'label': 'Divisions', 'widget_type': 'TupleSlider', 'min': 1, 'max': 100, 'step': 1},
+    widget_init=_on_init
+)
 def decimate_binned(
         mesh: Surface,
         divisions: Tuple[int, int, int]) -> Surface:
@@ -151,6 +193,10 @@ def decimate_binned(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)
 def smooth(
         mesh: Surface,
         n_iterations: int = 15,
@@ -191,6 +237,10 @@ def smooth(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)
 def fill_holes(
         mesh: Surface,
         size: float = 1000) -> Surface:
@@ -202,7 +252,7 @@ def fill_holes(
     mesh : Surface
         The input mesh.
     size : float, optional
-        The maximum size of the holes to fill, by default 1000.
+        The max size of the holes to fill, by default 1000.
 
     Returns
     -------
@@ -214,6 +264,11 @@ def fill_holes(
     return vedo_mesh_to_napari(vedo_mesh)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    points={'label': 'Points'},
+    widget_init=_on_init
+)
 def inside_points(
         mesh: Surface,
         points: Points
@@ -239,6 +294,10 @@ def inside_points(
     return inside_points.points()
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)    
 def split(mesh: Surface) -> List[Surface]:
     """
     Split the given mesh into connected components.
@@ -262,6 +321,10 @@ def split(mesh: Surface) -> List[Surface]:
     return split_meshes
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    widget_init=_on_init
+)
 def extract_largest_region(
         mesh: Surface
         ) -> Surface:
@@ -283,6 +346,11 @@ def extract_largest_region(
     return vedo_mesh_to_napari(largest_region)
 
 
+@magic_factory(
+    mesh={'label': 'Surface'},
+    reference_image={'label': 'Reference Image'},
+    widget_init=_on_init
+)
 def binarize(
         mesh: Surface,
         reference_image: Union['napari.types.ImageData', 'napari.types.LabelsData']

@@ -33,7 +33,7 @@ def vedo_mesh_to_napari(mesh: vedo.Mesh) -> Surface:
     Surface
         The converted napari mesh.
     """
-    return Surface((mesh.points(), np.asarray(mesh.faces(), dtype=int)))
+    return Surface((mesh.vertices, np.asarray(mesh.cells, dtype=int)))
 
 def napari_to_vedo_points(points: Points) -> vedo.Points:
     """
@@ -65,7 +65,7 @@ def vedo_points_to_napari(points: vedo.Points) -> Points:
     Points
         The converted napari points.
     """
-    return Points(points.points())
+    return Points(points.vertices)
 
 def napari_to_vedo_vectors(vectors: Vectors) -> vedo.Line:
     """

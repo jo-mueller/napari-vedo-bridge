@@ -97,12 +97,12 @@ class VedoCutter(QWidget):
         """
         Send the currently displayed mesh in vedo to napari
         """
-        points = self.mesh.points()
-        faces = self.mesh.faces()
+        points = self.mesh.vertices
+        faces = self.mesh.cells
         if len(faces):
             if is_ragged(faces) or len(faces[0]):
                 tri_mesh = self.mesh.clone().triangulate()
-                faces = tri_mesh.faces()
+                faces = tri_mesh.cells
                 self.vedo_message.text("Mesh has been forced triangular!")
                 self.plt.render()
         faces = np.asarray(faces, dtype=int)

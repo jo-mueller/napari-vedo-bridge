@@ -291,7 +291,7 @@ def inside_points(
     vedo_mesh = napari_to_vedo_mesh(mesh)
     vedo_points = vedo.Points(points)
     inside_points = vedo_mesh.inside_points(vedo_points)
-    return inside_points.points()
+    return inside_points.vertices
 
 
 @magic_factory(

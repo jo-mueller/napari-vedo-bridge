@@ -1,7 +1,8 @@
 import vedo
 import numpy as np
 from napari_vedo_bridge.utils import napari_to_vedo_mesh, vedo_mesh_to_napari
-from napari.layers import Surface, Vectors, Points
+from napari.layers import Surface, Vectors, Points, Image, Labels
+from napari.types import LayerDataTuple
 from typing import Tuple, List, Union
 
 from magicgui import widgets, magic_factory
@@ -40,11 +41,12 @@ def compute_normals(
     vedo_mesh = napari_to_vedo_mesh(mesh)
     vedo_mesh.compute_normals()
 
-    normals = vedo_mesh.normals()
+    vedo_mesh.compute_normals()
     points = vedo_mesh.vertices
+    directions = vedo_mesh.vertex_normals
 
-    napari_vectors = np.stack([points, normals], axis=1)
-    return napari_vectors
+    napari_vectors = np.stack([points, directions], axis=1)
+    return Vectors(napari_vectors)
 
 
 @magic_factory(
@@ -201,8 +203,8 @@ def smooth(
         mesh: Surface,
         n_iterations: int = 15,
         pass_band: float = 0.1,
-        edge_angle: float = 15,
-        feature_angle: float = 60,
+        edge_angle: int = 15,
+        feature_angle: int = 60,
         boundary: bool = False) -> Surface:
     """
     Smooth the given mesh.
@@ -230,9 +232,9 @@ def smooth(
     vedo_mesh = napari_to_vedo_mesh(mesh)
     vedo_mesh.smooth(
         niter=n_iterations,
-        passBand=pass_band,
-        edgeAngle=edge_angle,
-        featureAngle=feature_angle,
+        pass_band=pass_band,
+        edge_angle=edge_angle,
+        feature_angle=feature_angle,
         boundary=boundary)
     return vedo_mesh_to_napari(vedo_mesh)
 
@@ -291,14 +293,14 @@ def inside_points(
     vedo_mesh = napari_to_vedo_mesh(mesh)
     vedo_points = vedo.Points(points)
     inside_points = vedo_mesh.inside_points(vedo_points)
-    return inside_points.vertices
+    return Points(inside_points.vertices)
 
 
 @magic_factory(
     mesh={'label': 'Surface'},
     widget_init=_on_init
 )    
-def split(mesh: Surface) -> List[Surface]:
+def split(mesh: Surface) -> List[LayerDataTuple]:
     """
     Split the given mesh into connected components.
 
@@ -313,10 +315,10 @@ def split(mesh: Surface) -> List[Surface]:
         The connected components of the mesh
     """
     vedo_mesh = napari_to_vedo_mesh(mesh)
-    split_meshes = vedo_mesh.split()
+    split_meshes_v = list(vedo_mesh.split())
     split_meshes = [
-        (vedo_mesh_to_napari(split_mesh), {}, 'surface')
-        for split_mesh in split_meshes
+        (vedo_mesh_to_napari(m), {}, 'surface')
+        for m in split_meshes_v
         ]
     return split_meshes
 
@@ -353,7 +355,7 @@ def extract_largest_region(
 )
 def binarize(
         mesh: Surface,
-        reference_image: Union['napari.types.ImageData', 'napari.types.LabelsData']
+        reference_image: Union[Image, Labels]
         ) -> Surface:
     """
     Binarize the given mesh.
@@ -372,7 +374,7 @@ def binarize(
         The binarized mesh.
     """
 
-    target_dimensions = reference_image.shape
+    target_dimensions = reference_image.data.shape
     vedo_mesh = napari_to_vedo_mesh(mesh)
     vedo_mesh.binarize(dims=target_dimensions)
     return vedo_mesh_to_napari(vedo_mesh)

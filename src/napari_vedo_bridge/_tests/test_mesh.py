@@ -14,7 +14,7 @@ from napari_vedo_bridge._mesh import (
     extract_largest_region,
     binarize,
 )
-from napari.layers import Surface, Points, Image
+from napari.layers import Surface
 
 
 @pytest.fixture

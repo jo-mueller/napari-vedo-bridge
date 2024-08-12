@@ -106,8 +106,8 @@ def subdivide(
 
 @magic_factory(
     surface={'label': 'Surface'},
-    fraction={'label': 'Fraction', 'widget_type': 'FloatSlider', 'min': 0.1, 'max': 1.0, 'step': 0.01},
-    n_vertices={'label': 'Number of Vertices', 'widget_type': 'IntSlider', 'min': 0, 'max': 100000, 'step': 100},
+    fraction={'label': 'Fraction', 'min': 0.1, 'max': 1.0, 'step': 0.01},
+    n_vertices={'label': 'Number of Vertices', 'min': 0, 'max': 100000, 'step': 100, 'nullable': True},
     widget_init=_on_init
 )
 def decimate(
@@ -138,7 +138,8 @@ def decimate(
 
 @magic_factory(
     surface={'label': 'Surface'},
-    fraction={'label': 'Fraction', 'widget_type': 'FloatSlider', 'min': 0.1, 'max': 1.0, 'step': 0.01},
+    fraction={'label': 'Fraction', 'min': 0.1, 'max': 1.0, 'step': 0.01},
+    n_vertices={'label': 'Number of Vertices', 'min': 0, 'max': 65535, 'step': 1, 'nullable': True},
     widget_init=_on_init
 )
 def decimate_pro(
@@ -241,6 +242,7 @@ def smooth(
 
 @magic_factory(
     surface={'label': 'Surface'},
+    size={'label': 'Size', 'min': 0.1, 'max': 65535, 'step': 0.1},
     widget_init=_on_init
 )
 def fill_holes(

@@ -19,6 +19,8 @@ from ._points import (
     remove_outliers,
 )
 
+from . import _widgets as widgets
+
 __all__ = [
     "compute_normals",
     "shrink",

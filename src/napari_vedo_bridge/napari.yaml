@@ -2,6 +2,9 @@ name: napari-vedo-bridge
 display_name: napari vedo bridge
 contributions:
   commands:
+    - id: napari-vedo-bridge.vedo_viewer
+      python_name: napari_vedo_bridge._widgets:VedoWidget
+      title: Vedo mesh viusdalization widget
     - id: napari-vedo-bridge.cutter_widget
       python_name: napari_vedo_bridge._cutter_widget:VedoCutter
       title: Interactive mesh cutting with Vedo
@@ -64,6 +67,9 @@ contributions:
     - command: napari-vedo-bridge.cutter_widget
       display_name: Mesh cutter
       autogenerate: true
+    - command: napari-vedo-bridge.vedo_viewer
+      display_name: Vedo mesh viewer
+
     - command: napari-vedo-bridge.compute_normals
       display_name: Compute normals
     - command: napari-vedo-bridge.shrink
@@ -97,6 +103,9 @@ contributions:
       - command: napari-vedo-bridge.load_surfaces
       - command: napari-vedo-bridge.write_points
       - command: napari-vedo-bridge.write_surfaces
+
+    napari/layers/visualize:
+      - command: napari-vedo-bridge.vedo_viewer
 
     napari/layers/transform:
       - command: napari-vedo-bridge.cutter_widget

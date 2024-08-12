@@ -1,4 +1,5 @@
 import numpy as np
+import vedo
 from .._cutter_widget import VedoCutter
 
 
@@ -15,7 +16,6 @@ def test_cutter_widget(make_napari_viewer):
 
 def test_get_from_napari(make_napari_viewer):
     # Load the test mesh into the napari viewer
-    import vedo
     viewer = make_napari_viewer()
     mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
     viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
@@ -32,7 +32,6 @@ def test_get_from_napari(make_napari_viewer):
 
 
 def test_cutters(make_napari_viewer):
-    import vedo
     viewer = make_napari_viewer()
     mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
     viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
@@ -51,3 +50,34 @@ def test_cutters(make_napari_viewer):
     vedo_cutter.buttonGroup.buttons()[2].click()
     n_checked_buttons = len([b for b in vedo_cutter.buttonGroup.buttons() if b.isChecked()])
     assert n_checked_buttons == 1
+
+
+def base_widget(make_napari_viewer):
+    from napari_vedo_bridge._widgets.base_widget import BaseWidget
+    viewer = make_napari_viewer()
+
+    n_widgets = len(viewer.window._dock_widgets)
+
+    mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
+    viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
+    n_layers = len(viewer.layers)
+
+    base_widget = BaseWidget(viewer)
+    viewer.window.add_dock_widget(base_widget, area='right')
+
+    assert len(viewer.window._dock_widgets) == n_widgets + 1
+
+    base_widget.pushButton_get_from_napari.click()
+    assert base_widget.mesh is not None
+
+    base_widget.pushButton_send_back.click()
+    assert len(viewer.layers) == n_layers + 1
+
+    base_widget.pushButton_clear.click()
+    assert base_widget.mesh is None
+
+    base_widget.pushButton_show_hotkeys.click()
+    assert len(viewer.window._dock_widgets) == n_widgets + 2
+
+
+

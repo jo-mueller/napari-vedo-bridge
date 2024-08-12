@@ -18,7 +18,7 @@ def test_get_from_napari(make_napari_viewer):
     import vedo
     viewer = make_napari_viewer()
     mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
-    viewer.add_surface((mesh.points(), np.asarray(mesh.faces())), name="test_mesh")
+    viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
 
     vedo_cutter = VedoCutter(viewer)
     vedo_cutter.get_from_napari()
@@ -35,7 +35,7 @@ def test_cutters(make_napari_viewer):
     import vedo
     viewer = make_napari_viewer()
     mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
-    viewer.add_surface((mesh.points(), np.asarray(mesh.faces())), name="test_mesh")
+    viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
 
     vedo_cutter = VedoCutter(viewer)
     vedo_cutter.get_from_napari()

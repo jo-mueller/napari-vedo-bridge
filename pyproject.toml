@@ -28,7 +28,7 @@ dependencies = [
     "numpy",
     "magicgui",
     "qtpy",
-    "vedo>=2024.5.0",
+    "vedo>=2024.5.2",
     "napari-timelapse-processor",
     "napari"
 ]

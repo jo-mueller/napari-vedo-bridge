@@ -35,4 +35,5 @@ __all__ = [
     "binarize",
     "smooth_points",
     "remove_outliers"
+    "widgets",
 ]

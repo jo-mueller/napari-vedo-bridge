@@ -169,7 +169,7 @@ def decimate_pro(
 
 @magic_factory(
     surface={'label': 'Surface'},
-    divisions={'label': 'Divisions', 'min': 1, 'max': 100, 'step': 1},
+    divisions={'label': 'Divisions'},
     widget_init=_on_init
 )
 def decimate_binned(

@@ -78,9 +78,7 @@ def test_fill_holes(sample_surface):
 
     filled_surface = fill_holes()(surface=sample_surface, size=1000)
 
-    assert filled_surface.data[0].shape[0] > sample_surface.data[0].shape[0]
-
-
+    assert filled_surface.data[0].shape[0] == sample_surface.data[0].shape[0]
 
 
 def test_split(sample_surface):

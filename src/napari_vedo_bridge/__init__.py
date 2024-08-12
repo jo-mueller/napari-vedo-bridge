@@ -16,7 +16,7 @@ from ._mesh import (
 )
 
 from ._points import (
-    smooth_points,
+    smooth_mls_1d,
     remove_outliers,
 )
 

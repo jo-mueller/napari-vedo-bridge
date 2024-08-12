@@ -18,16 +18,12 @@ def _on_init(widget):
 
 @magic_factory(
     points={'label': 'Points'},
-    boundary={'label': 'Boundary', 'widget_type': 'CheckBox'},
     widget_init=_on_init
 )
-def smooth_points(
+def smooth_mls_1d(
         points: Points,
-        n_iterations: int = 15,
-        pass_band: float = 0.1,
-        edge_angle: float = 15,
-        feature_angle: float = 60,
-        boundary: bool = False) -> Points:
+        factor: float = 0.2,
+        radius: float = 0) -> Points:
     """
     Smooth the given points.
 
@@ -35,16 +31,10 @@ def smooth_points(
     ----------
     points : Points
         The input points.
-    n_iterations : int, optional
-        The number of iterations, by default 15.
-    pass_band : float, optional
-        The pass band, by default 0.1.
-    edge_angle : float, optional
-        The edge angle, by default 15.
-    feature_angle : float, optional
-        The feature angle, by default 60.
-    boundary : bool, optional
-        Whether to smooth the boundary, by default False.
+    factor : float, optional
+        The smoothing factor, by default 0.2.
+    radius : float, optional
+        The radius for smoothing, by default 0.
 
     Returns
     -------
@@ -52,12 +42,9 @@ def smooth_points(
         The smoothed points.
     """
     vedo_points = napari_to_vedo_points(points)
-    vedo_points.smooth(
-        niter=n_iterations,
-        passBand=pass_band,
-        edgeAngle=edge_angle,
-        featureAngle=feature_angle,
-        boundary=boundary)
+    vedo_points.smooth_mls_1d(
+        f=factor,
+        radius=radius)
     return vedo_points_to_napari(vedo_points)
 
 

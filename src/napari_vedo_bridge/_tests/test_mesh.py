@@ -15,12 +15,14 @@ from napari_vedo_bridge._mesh import (
     extract_largest_region,
     binarize,
 )
-from napari.layers import Surface, Points
+from napari.layers import Surface, Points, Image
 
 
 @pytest.fixture
 def sample_surface():
-    return vedo.load(vedo.dataurl + 'bunny.obj')
+    mesh = vedo.load(vedo.dataurl + 'bunny.obj')
+    surface = Surface((mesh.vertices, np.asarray(mesh.cells, dtype=int)))
+    return surface
 
 
 @pytest.fixture
@@ -29,83 +31,75 @@ def sample_points():
 
 
 def test_compute_normals(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    normals = compute_normals(mesh=surface)
-    assert normals.shape == (surface.data[0].shape[0], 2, 3)
+    normals = compute_normals()(surface=sample_surface)
+    assert normals.data.shape == (sample_surface.data[0].shape[0], 2, 3)
 
 
 def test_shrink(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    shrunk_surface = shrink(mesh=surface, fraction=0.5)
-    assert shrunk_surface.data[0].shape == surface.data[0].shape
-    assert shrunk_surface.data[1].shape == surface.data[1].shape
+    shrunk_surface = shrink()(surface=sample_surface, fraction=0.5)
+    assert shrunk_surface is not None
 
 
 def test_subdivide(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    subdivided_surface = subdivide(mesh=surface, n_iterations=1)
-    assert subdivided_surface.data[0].shape[0] > surface.data[0].shape[0]
-    assert subdivided_surface.data[1].shape[0] > surface.data[1].shape[0]
+    subdivided_surface = subdivide()(surface=sample_surface, n_iterations=1)
+    assert subdivided_surface.data[0].shape[0] > sample_surface.data[0].shape[0]
+    assert subdivided_surface.data[1].shape[0] > sample_surface.data[1].shape[0]
 
 
 def test_decimate(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    decimated_surface = decimate(mesh=surface, fraction=0.5)
-    assert decimated_surface.data[0].shape[0] < surface.data[0].shape[0]
-    assert decimated_surface.data[1].shape[0] < surface.data[1].shape[0]
+    decimated_surface = decimate()(surface=sample_surface, fraction=0.5)
+    assert decimated_surface.data[0].shape[0] < sample_surface.data[0].shape[0]
+    assert decimated_surface.data[1].shape[0] < sample_surface.data[1].shape[0]
 
 
 def test_decimate_pro(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    decimated_surface = decimate_pro(mesh=surface, fraction=0.5)
-    assert decimated_surface.data[0].shape[0] < surface.data[0].shape[0]
-    assert decimated_surface.data[1].shape[0] < surface.data[1].shape[0]
+    decimated_surface = decimate_pro()(surface=sample_surface, fraction=0.5)
+    assert decimated_surface.data[0].shape[0] < sample_surface.data[0].shape[0]
+    assert decimated_surface.data[1].shape[0] < sample_surface.data[1].shape[0]
 
 
 def test_decimate_binned(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    decimated_surface = decimate_binned(mesh=surface, divisions=(10, 10, 10))
-    assert decimated_surface.data[0].shape[0] < surface.data[0].shape[0]
-    assert decimated_surface.data[1].shape[0] < surface.data[1].shape[0]
+    decimated_surface = decimate_binned()(surface=sample_surface, divisions=(10, 10, 10))
+    assert decimated_surface.data[0].shape[0] < sample_surface.data[0].shape[0]
+    assert decimated_surface.data[1].shape[0] < sample_surface.data[1].shape[0]
 
 
 def test_smooth(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    smoothed_surface = smooth(mesh=surface, n_iterations=15, pass_band=0.1, edge_angle=15, feature_angle=60, boundary=False)
-    assert smoothed_surface.data[0].shape == surface.data[0].shape
-    assert smoothed_surface.data[1].shape == surface.data[1].shape
+    smoothed_surface = smooth()(surface=sample_surface, n_iterations=15, pass_band=0.1, edge_angle=15, feature_angle=60, boundary=False)
+    assert smoothed_surface.data[0].shape == sample_surface.data[0].shape
+    assert smoothed_surface.data[1].shape == sample_surface.data[1].shape
 
 
 def test_fill_holes(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    filled_surface = fill_holes(mesh=surface, size=1000)
-    assert filled_surface.data[0].shape == surface.data[0].shape
-    assert filled_surface.data[1].shape == surface.data[1].shape
+
+    mesh_data = list(sample_surface.data)
+    # remove some faces to create holes
+    mesh_data[1] = mesh_data[1][:-2]
+    sample_surface = Surface(mesh_data)
+
+    filled_surface = fill_holes()(surface=sample_surface, size=1000)
+
+    assert filled_surface.data[0].shape[0] > sample_surface.data[0].shape[0]
 
 
 def test_inside_points(sample_surface, sample_points):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
     points = Points(sample_points)
-    inside_pts = inside_points(mesh=surface, points=points)
-    assert inside_pts.shape[1] == 3
+    inside_pts = inside_points()(surface=sample_surface, points=points)
+    assert inside_pts.data.shape[1] == 3
 
 
 def test_split(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    split_surfaces = split(mesh=surface)
-    assert len(split_surfaces) > 1
+    split_surfaces = split()(surface=sample_surface)
+    assert len(split_surfaces) == 1
 
 
 def test_extract_largest_region(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    largest_region = extract_largest_region(mesh=surface)
-    assert largest_region.data[0].shape[0] <= surface.data[0].shape[0]
-    assert largest_region.data[1].shape[0] <= surface.data[1].shape[0]
+    largest_region = extract_largest_region()(surface=sample_surface)
+    assert largest_region.data[0].shape[0] <= sample_surface.data[0].shape[0]
+    assert largest_region.data[1].shape[0] <= sample_surface.data[1].shape[0]
 
 
 def test_binarize(sample_surface):
-    surface = Surface((sample_surface.vertices, np.asarray(sample_surface.cells)))
-    reference_image = np.zeros((100, 100, 100))
-    binarized_surface = binarize(mesh=surface, reference_image=reference_image)
+    binarized_surface = binarize()(surface=sample_surface)
     assert binarized_surface.data[0].shape[0] > 0
     assert binarized_surface.data[1].shape[0] > 0

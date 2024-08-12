@@ -1,14 +1,15 @@
 import vedo
 import numpy as np
 from napari.layers import Surface, Points, Vectors
+import vedo.pointcloud
 
-def napari_to_vedo_mesh(mesh: Surface) -> vedo.Mesh:
+def napari_to_vedo_mesh(surface: Surface) -> vedo.Mesh:
     """
     Convert a napari mesh to a vedo mesh.
 
     Parameters
     ----------
-    mesh : Surface
+    surface : Surface
         The input napari mesh.
 
     Returns
@@ -16,7 +17,7 @@ def napari_to_vedo_mesh(mesh: Surface) -> vedo.Mesh:
     vedo.Mesh
         The converted vedo mesh.
     """
-    vertices, faces = mesh.data
+    vertices, faces = surface.data[0], surface.data[1]
     return vedo.Mesh([vertices, faces])
 
 def vedo_mesh_to_napari(mesh: vedo.Mesh) -> Surface:
@@ -49,7 +50,7 @@ def napari_to_vedo_points(points: Points) -> vedo.Points:
     vedo.Points
         The converted vedo points.
     """
-    return vedo.Points(points.data)
+    return vedo.pointcloud.Points(points.data)
 
 def vedo_points_to_napari(points: vedo.Points) -> Points:
     """

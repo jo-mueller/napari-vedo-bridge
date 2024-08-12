@@ -10,7 +10,6 @@ from napari_vedo_bridge._mesh import (
     decimate_binned,
     smooth,
     fill_holes,
-    inside_points,
     split,
     extract_largest_region,
     binarize,
@@ -82,10 +81,6 @@ def test_fill_holes(sample_surface):
     assert filled_surface.data[0].shape[0] > sample_surface.data[0].shape[0]
 
 
-def test_inside_points(sample_surface, sample_points):
-    points = Points(sample_points)
-    inside_pts = inside_points()(surface=sample_surface, points=points)
-    assert inside_pts.data.shape[1] == 3
 
 
 def test_split(sample_surface):

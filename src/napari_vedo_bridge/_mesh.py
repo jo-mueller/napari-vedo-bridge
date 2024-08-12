@@ -268,36 +268,6 @@ def fill_holes(
 
 @magic_factory(
     surface={'label': 'Surface'},
-    points={'label': 'Points'},
-    widget_init=_on_init
-)
-def inside_points(
-        surface: Surface,
-        points: Points
-        ) -> Points:
-    """
-    Get the points inside the given surface.
-
-    Parameters
-    ----------
-    surface : Surface
-        The input surface.
-    points : Points
-        The input points.
-
-    Returns
-    -------
-    Points
-        The points inside the mesh.
-    """
-    vedo_mesh = napari_to_vedo_mesh(surface)
-    vedo_points = vedo.Points(points)
-    inside_points = vedo_mesh.inside_points(vedo_points)
-    return Points(inside_points.vertices)
-
-
-@magic_factory(
-    surface={'label': 'Surface'},
     widget_init=_on_init
 )    
 def split(surface: Surface) -> List[LayerDataTuple]:

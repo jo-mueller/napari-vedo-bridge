@@ -20,6 +20,7 @@ contributions:
       python_name: napari_vedo_bridge._reader:get_reader
       title: Load surfaces from disk
 
+      # Processing commands
     - id: napari-vedo-bridge.compute_normals
       python_name: napari_vedo_bridge._mesh:compute_normals
       title: Compute normals on surface
@@ -59,6 +60,58 @@ contributions:
     - id: napari-vedo-bridge.remove_outliers
       python_name: napari_vedo_bridge._points:remove_outliers
       title: Remove outliers from points
+
+    # Sample data
+    - id: napari-vedo-bridge.data.mouse_limb1
+      python_name: napari_vedo_bridge._sample_data:mouse_limb1
+      title: Mouse limb 1
+    - id: napari-vedo-bridge.data.mouse_limb2
+      python_name: napari_vedo_bridge._sample_data:mouse_limb2
+      title: Mouse limb 2
+    - id: napari-vedo-bridge.data.mouse_limb3
+      python_name: napari_vedo_bridge._sample_data:mouse_limb3
+      title: Mouse limb 3
+    - id: napari-vedo-bridge.data.beethoven
+      python_name: napari_vedo_bridge._sample_data:beethoven
+      title: Beethoven
+    - id: napari-vedo-bridge.data.bunny
+      python_name: napari_vedo_bridge._sample_data:bunny
+      title: Bunny
+    - id: napari-vedo-bridge.data.cow
+      python_name: napari_vedo_bridge._sample_data:cow
+      title: Cow
+    - id: napari-vedo-bridge.data.apple
+      python_name: napari_vedo_bridge._sample_data:apple
+      title: Apple
+    - id: napari-vedo-bridge.data.panther
+      python_name: napari_vedo_bridge._sample_data:panther
+      title: Panther
+
+  sample_data:
+    - command: napari-vedo-bridge.data.mouse_limb1
+      display_name: Mouse limb 1
+      key: mouse_limb1
+    - command: napari-vedo-bridge.data.mouse_limb2
+      display_name: Mouse limb 2
+      key: mouse_limb2
+    - command: napari-vedo-bridge.data.mouse_limb3
+      display_name: Mouse limb 3
+      key: mouse_limb3
+    - command: napari-vedo-bridge.data.beethoven
+      display_name: Beethoven
+      key: beethoven
+    - command: napari-vedo-bridge.data.bunny
+      display_name: Bunny
+      key: bunny
+    - command: napari-vedo-bridge.data.cow
+      display_name: Cow
+      key: cow
+    - command: napari-vedo-bridge.data.apple
+      display_name: Apple
+      key: apple
+    - command: napari-vedo-bridge.data.panther
+      display_name: Panther
+      key: panther
 
   widgets:
     - command: napari-vedo-bridge.cutter_widget

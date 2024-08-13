@@ -19,6 +19,8 @@ from ._points import (
     remove_outliers,
 )
 
+from . import _widgets as widgets
+
 __all__ = [
     "compute_normals",
     "shrink",
@@ -33,4 +35,6 @@ __all__ = [
     "binarize",
     "smooth_points",
     "remove_outliers"
+    "smooth_mls_1d",
+    "widgets",
 ]

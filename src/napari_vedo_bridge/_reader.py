@@ -67,9 +67,9 @@ def points_reader(path: PathOrPaths) -> List["LayerData"]:
             os.path.join(path, f)
             for f in os.listdir(path)
             if f.split('.')[-1] in _supported_extensions]
-        path = sorted(path, key=lambda x: int(Path(x).stem))
+        path = sorted(path, key=lambda x: Path(x).stem)
     elif isinstance(path, list):
-        path = sorted(path, key=lambda x: int(Path(x).stem))
+        path = sorted(path, key=lambda x: Path(x).stem)
     elif isinstance(path, (str, Path)):
         path = [str(path)]
 
@@ -120,9 +120,9 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
             if f.split('.')[-1] in _supported_extensions
             ]
         
-        path = sorted(path, key=lambda x: int(Path(x).stem))
+        path = sorted(path, key=lambda x: Path(x).stem)
     elif isinstance(path, list):
-        path = sorted(path, key=lambda x: int(Path(x).stem))
+        path = sorted(path, key=lambda x: Path(x).stem)
     elif isinstance(path, (str, Path)):
         path = [path]
 

@@ -16,7 +16,7 @@ settings.default_backend = 'vtk'
 
 
 class EmittingStream(QObject):
-    textWritten = pyqtSignal(str)
+    textWritten = Signal(str)
 
     def write(self, text):
         self.textWritten.emit(str(text))

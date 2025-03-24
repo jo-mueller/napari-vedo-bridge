@@ -26,6 +26,24 @@ jobs:
         platform: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         backend: [ "pyqt5" ]
+        include:
+          # Windows py39
+          - python: 3.9
+            platform: windows-latest
+            backend: pyqt5 #,pyside2
+          - python: 3.10
+            platform: windows-latest
+            backend: pyqt5
+          - python: 3.11
+            platform: windows-latest
+            backend: pyqt6
+          - python: 3.12
+            platform: windows-latest
+            backend: pyqt6
+          - python: 3.13
+            platform: windows-latest
+            backend: pyqt6
+
 
     steps:
       - uses: actions/checkout@v4

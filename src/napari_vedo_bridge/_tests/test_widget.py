@@ -16,9 +16,11 @@ def test_cutter_widget(make_napari_viewer):
 
 def test_get_from_napari(make_napari_viewer):
     # Load the test mesh into the napari viewer
+    from .._sample_data import beethoven
     viewer = make_napari_viewer()
-    mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
-    viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
+
+    surface = beethoven()[0]
+    viewer.add_surface(surface[0])
 
     vedo_cutter = VedoCutter(viewer)
     vedo_cutter.get_from_napari()
@@ -32,9 +34,11 @@ def test_get_from_napari(make_napari_viewer):
 
 
 def test_cutters(make_napari_viewer):
+    from .._sample_data import beethoven
     viewer = make_napari_viewer()
-    mesh = vedo.load("https://vedo.embl.es/examples/data/270.vtk")
-    viewer.add_surface((mesh.vertices, np.asarray(mesh.cells)), name="test_mesh")
+    
+    surface = beethoven()[0]
+    viewer.add_surface(surface[0])
 
     vedo_cutter = VedoCutter(viewer)
     vedo_cutter.get_from_napari()

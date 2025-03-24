@@ -1,6 +1,6 @@
 import napari.utils
 from qtpy import uic, QtWidgets
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from qtpy.QtCore import QObject, Signal, Qt
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import napari

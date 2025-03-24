@@ -1,6 +1,6 @@
 import napari.utils
 from qtpy import uic, QtWidgets
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from qtpy.QtCore import QObject, Signal, Qt
 
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import napari
@@ -16,7 +16,7 @@ settings.default_backend = 'vtk'
 
 
 class EmittingStream(QObject):
-    textWritten = pyqtSignal(str)
+    textWritten = Signal(str)
 
     def write(self, text):
         self.textWritten.emit(str(text))

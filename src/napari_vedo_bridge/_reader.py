@@ -108,9 +108,9 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
     import os
     from pathlib import Path
     import tqdm
-    import pkg_resources
     from napari_timelapse_processor import TimelapseConverter
-    import napari
+    from importlib.metadata import version
+    from packaging.version import Version
 
     # whether directory, list of files or single file is passed
     if os.path.isdir(path):
@@ -146,8 +146,7 @@ def surfaces_reader(path: PathOrPaths) -> List["LayerData"]:
     # surface_layer.features only available in 0.5.0 or higher
 
     properties = {}
-    if pkg_resources.parse_version(napari.__version__) >= \
-            pkg_resources.parse_version('0.5.0'):
+    if Version(version('napari')) >= Version('0.5.0'):
         properties['features'] = layer.features
 
     return [(data, properties, 'surface')]

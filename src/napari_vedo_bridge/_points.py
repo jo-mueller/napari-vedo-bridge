@@ -9,7 +9,7 @@ from qtpy.QtCore import Qt
 def _on_init(widget):
     label_widget = widgets.Label(value='')
     func_name = widget.label.split(' ')[0]
-    label_widget.value = f'<a href=\"https://vedo.embl.es/docs/vedo/pointcloud.html#Points.{func_name}\">skimage.filters.{func_name}</a>'
+    label_widget.value = f'<a href=\"https://vedo.embl.es/docs/vedo/pointcloud.html#Points.{func_name}\">vedo.Points.{func_name}</a>'
     label_widget.native.setTextFormat(Qt.RichText)
     label_widget.native.setTextInteractionFlags(Qt.TextBrowserInteraction)
     label_widget.native.setOpenExternalLinks(True)

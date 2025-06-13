@@ -47,6 +47,40 @@ def smooth_mls_1d(
         radius=radius)
     return vedo_points_to_napari(vedo_points)
 
+@magic_factory(
+    points={'label': 'Points'},
+    widget_init=_on_init
+)
+def smooth_mls_2d(
+        points: Points,
+        factor: float = 0.2,
+        radius: Optional[float] = 0) -> Points:
+    """
+    Smooth the given points in 2D.
+
+    Parameters
+    ----------
+    points : Points
+        The input points.
+    factor : float, optional
+        The smoothing factor, by default 0.2.
+    radius : float, optional
+        The radius for smoothing, by default 0.
+
+    Returns
+    -------
+    Points
+        The smoothed points.
+    """
+    vedo_points = napari_to_vedo_points(points)
+    vedo_points.smooth_mls_2d(
+        f=factor,
+        radius=radius)
+    new_points = vedo_points_to_napari(vedo_points)
+    new_points.scale = points.scale
+    new_points.size = points.size
+    new_points.translate = points.translate
+    return new_points
 
 @magic_factory(
     points={'label': 'Points'},

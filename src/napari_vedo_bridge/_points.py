@@ -4,6 +4,7 @@ from napari_vedo_bridge.utils import napari_to_vedo_points, vedo_points_to_napar
 from napari.layers import Points
 from magicgui import widgets, magic_factory
 from qtpy.QtCore import Qt
+from typing import Optional
 
 
 def _on_init(widget):
@@ -23,7 +24,7 @@ def _on_init(widget):
 def smooth_mls_1d(
         points: Points,
         factor: float = 0.2,
-        radius: float = 0) -> Points:
+        radius: Optional[float] = 0) -> Points:
     """
     Smooth the given points.
 

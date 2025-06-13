@@ -46,7 +46,11 @@ def smooth_mls_1d(
     vedo_points.smooth_mls_1d(
         f=factor,
         radius=radius)
-    return vedo_points_to_napari(vedo_points)
+    new_points = vedo_points_to_napari(vedo_points)
+    new_points.scale = points.scale
+    new_points.size = points.size
+    new_points.translate = points.translate
+    return new_points
 
 @magic_factory(
     points={'label': 'Points'},

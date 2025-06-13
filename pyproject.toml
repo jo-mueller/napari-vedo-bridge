@@ -53,7 +53,7 @@ testing = [
 "User Support" = "https://github.com/jo-mueller/napari-vedo-bridge/issues"
 
 [build-system]
-requires = ["setuptools>=42.0.0", "wheel"]
+requires = ["setuptools>=42.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -65,8 +65,9 @@ where = ["src"]
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
 
-[tool.setuptools.dynamic]
-version = {attr = "napari_vedo_bridge.__version__"}
+[tool.setuptools_scm]
+write_to = "src/napari_vedo_bridge/_version.py"
+fallback_version = "0.0.1+nogit"
 
 [tool.black]
 line-length = 79

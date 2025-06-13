@@ -57,9 +57,12 @@ contributions:
     - id: napari-vedo-bridge.binarize
       python_name: napari_vedo_bridge._mesh:binarize
       title: Binarize surface
-    - id: napari-vedo-bridge.smooth_points
-      python_name: napari_vedo_bridge._points:smooth_points
-      title: Smooth points
+    - id: napari-vedo-bridge.smooth_points_1d
+      python_name: napari_vedo_bridge._points:smooth_mls_1d
+      title: Smooth points (moving lest-squares 1D)
+    - id: napari-vedo-bridge.smooth_points_2d
+      python_name: napari_vedo_bridge._points:smooth_mls_2d
+      title: Smooth points (moving least-squares 2D)
     - id: napari-vedo-bridge.remove_outliers
       python_name: napari_vedo_bridge._points:remove_outliers
       title: Remove outliers from points
@@ -145,8 +148,10 @@ contributions:
       display_name: Extract largest region
     - command: napari-vedo-bridge.binarize
       display_name: Binarize mesh
-    - command: napari-vedo-bridge.smooth_points
-      display_name: Smooth points
+    - command: napari-vedo-bridge.smooth_points_1d
+      display_name: Smooth points (moving least-squares 1D)
+    - command: napari-vedo-bridge.smooth_points_2d
+      display_name: Smooth points (moving least-squares 2D)
     - command: napari-vedo-bridge.remove_outliers
       display_name: Remove outliers
 
@@ -173,7 +178,8 @@ contributions:
       - command: napari-vedo-bridge.decimate
       - command: napari-vedo-bridge.decimate_pro
       - command: napari-vedo-bridge.decimate_binned
-      - command: napari-vedo-bridge.smooth_points
+      - command: napari-vedo-bridge.smooth_points_1d
+      - command: napari-vedo-bridge.smooth_points_2d
 
     napari/layers/segment:
       - command: napari-vedo-bridge.extract_largest_region

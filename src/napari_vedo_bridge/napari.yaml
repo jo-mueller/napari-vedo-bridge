@@ -148,8 +148,8 @@ contributions:
       display_name: Extract largest region
     - command: napari-vedo-bridge.binarize
       display_name: Binarize mesh
-    - command: napari-vedo-bridge.smooth_points
-      display_name: Smooth points
+    - command: napari-vedo-bridge.smooth_points_1d
+      display_name: Smooth points (moving least-squares 1D)
     - command: napari-vedo-bridge.smooth_points_2d
       display_name: Smooth points (moving least-squares 2D)
     - command: napari-vedo-bridge.remove_outliers
@@ -178,7 +178,7 @@ contributions:
       - command: napari-vedo-bridge.decimate
       - command: napari-vedo-bridge.decimate_pro
       - command: napari-vedo-bridge.decimate_binned
-      - command: napari-vedo-bridge.smooth_points
+      - command: napari-vedo-bridge.smooth_points_1d
       - command: napari-vedo-bridge.smooth_points_2d
 
     napari/layers/segment:
